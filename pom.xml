@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dev.cronos</groupId>
+    <groupId>io.github.ibrahimbayramli</groupId>
     <artifactId>cronos-parent</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
@@ -69,12 +69,12 @@
                 <version>${lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>dev.cronos</groupId>
+                <groupId>io.github.ibrahimbayramli</groupId>
                 <artifactId>cronos-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>dev.cronos</groupId>
+                <groupId>io.github.ibrahimbayramli</groupId>
                 <artifactId>cronos-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>

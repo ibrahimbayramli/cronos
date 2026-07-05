@@ -116,43 +116,64 @@ Cronos **GitHub Packages** üzerinde yayınlanır ve hem **Maven** hem **Gradle*
 
 | Paket | Koordinatlar | Kullanım |
 |---|---|---|
-| **Starter** (önerilen) | `dev.cronos:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
-| Core | `dev.cronos:cronos-core:0.1.0` | Domain modelleri ve SPI (ileri düzey) |
+| **Starter** | `io.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Tek bağımlılık — otomatik yapılandırma, REST API, gömülü arayüz |
 
 **Kayıt defteri URL'si:** `https://maven.pkg.github.com/ibrahimbayramli/cronos`
 
 **GitHub'daki canlı paketler:**
 
 - [cronos-spring-boot-starter](https://github.com/ibrahimbayramli/cronos/packages/3114732)
-- [cronos-core](https://github.com/users/ibrahimbayramli/packages?repo_name=cronos)
 - [Tüm paketler](https://github.com/ibrahimbayramli/cronos/packages)
 - [v0.1.0 sürümü](https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0)
+
+> `cronos-core` dahili bir modüldür; starter JAR'ına gömülür ve ayrıca tüketilmesi gerekmez.
 
 ---
 
 ## Projenize ekleyin
+
+GitHub Packages özel bir kayıt defteridir. Depo yapılandırması ve kimlik doğrulama **bir kez** yapılır; projenize yalnızca **tek bir bağımlılık** eklersiniz.
 
 ### Maven
 
 <details open>
 <summary><strong>Adım adım</strong></summary>
 
-**1. Depo** — `pom.xml` dosyanıza ekleyin:
+**1. Kayıt defteri ve kimlik doğrulama** — `~/.m2/settings.xml` dosyanıza ekleyin (proje `pom.xml`'ine değil):
 
 ```xml
-<repositories>
-    <repository>
-        <id>github-cronos</id>
-        <url>https://maven.pkg.github.com/ibrahimbayramli/cronos</url>
-    </repository>
-</repositories>
+<settings>
+  <servers>
+    <server>
+      <id>github-cronos</id>
+      <username>YOUR_GITHUB_USERNAME</username>
+      <password>YOUR_GITHUB_TOKEN</password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>github-cronos</id>
+      <repositories>
+        <repository>
+          <id>github-cronos</id>
+          <url>https://maven.pkg.github.com/ibrahimbayramli/cronos</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>github-cronos</activeProfile>
+  </activeProfiles>
+</settings>
 ```
 
-**2. Bağımlılık:**
+> `YOUR_GITHUB_TOKEN` için `read:packages` izni yeterlidir.
+
+**2. Bağımlılık** — `pom.xml` dosyanıza yalnızca bunu ekleyin:
 
 ```xml
 <dependency>
-    <groupId>dev.cronos</groupId>
+    <groupId>io.github.ibrahimbayramli</groupId>
     <artifactId>cronos-spring-boot-starter</artifactId>
     <version>0.1.0</version>
 </dependency>
@@ -172,7 +193,14 @@ mvn spring-boot:run
 <details open>
 <summary><strong>Adım adım</strong></summary>
 
-**1. Depo** — `settings.gradle.kts` içinde (Gradle 7+, önerilen):
+**1. Kayıt defteri ve kimlik doğrulama** — `gradle.properties` (veya `~/.gradle/gradle.properties`):
+
+```properties
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_GITHUB_TOKEN
+```
+
+`settings.gradle.kts` içinde (Gradle 7+, önerilen):
 
 ```kotlin
 dependencyResolutionManagement {
@@ -182,6 +210,10 @@ dependencyResolutionManagement {
         maven {
             name = "GitHubPackagesCronos"
             url = uri("https://maven.pkg.github.com/ibrahimbayramli/cronos")
+            credentials {
+                username = providers.gradleProperty("gpr.user").get()
+                password = providers.gradleProperty("gpr.key").get()
+            }
         }
     }
 }
@@ -189,11 +221,11 @@ dependencyResolutionManagement {
 
 Eski projelerde aynı `maven { ... }` bloğunu `build.gradle.kts` içindeki `repositories` bölümüne ekleyin.
 
-**2. Bağımlılık** — `build.gradle.kts` içinde:
+**2. Bağımlılık** — `build.gradle.kts` içinde yalnızca bunu ekleyin:
 
 ```kotlin
 dependencies {
-    implementation("dev.cronos:cronos-spring-boot-starter:0.1.0")
+    implementation("io.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0")
 }
 ```
 
@@ -209,8 +241,8 @@ dependencies {
 ### Çözümlemeyi doğrulayın
 
 ```bash
-# Maven — dev.cronos:cronos-spring-boot-starter:0.1.0 indirilmeli
-mvn dependency:get -Dartifact=dev.cronos:cronos-spring-boot-starter:0.1.0
+# Maven — io.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0 indirilmeli
+mvn dependency:get -Dartifact=io.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0
 
 # Gradle — koordinatları yazdır
 ./gradlew verifyConsumerGradleSnippet

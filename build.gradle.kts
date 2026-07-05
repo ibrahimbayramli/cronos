@@ -2,7 +2,7 @@ plugins {
     base
 }
 
-group = "dev.cronos"
+group = "io.github.ibrahimbayramli"
 version = "0.1.0"
 
 val githubOwner = "ibrahimbayramli"
@@ -62,7 +62,7 @@ tasks.register("verifyConsumerMavenSnippet") {
     description = "Prints Maven coordinates and repository URL for consumers"
     doLast {
         println("Repository: $githubPackagesUrl")
-        println("Dependency: dev.cronos:$starterArtifact:$version")
+        println("Dependency: io.github.ibrahimbayramli:$starterArtifact:$version")
     }
 }
 
@@ -79,9 +79,8 @@ tasks.register("printPublishingInfo") {
             |Packages : https://github.com/$githubOwner/$githubRepository/packages
             |Release  : https://github.com/$githubOwner/$githubRepository/releases/tag/v$version
             |
-            |Artifacts (version $version)
-            |  - dev.cronos:cronos-core:$version
-            |  - dev.cronos:cronos-spring-boot-starter:$version
+            |Artifact (version $version)
+            |  - io.github.ibrahimbayramli:cronos-spring-boot-starter:$version
             |
             |Publish  : ./gradlew publishToGitHubPackages
             |         (requires GITHUB_TOKEN with write:packages)

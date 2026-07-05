@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dev.cronos</groupId>
+        <groupId>io.github.ibrahimbayramli</groupId>
         <artifactId>cronos-parent</artifactId>
         <version>0.1.0</version>
     </parent>
@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>dev.cronos</groupId>
+            <groupId>io.github.ibrahimbayramli</groupId>
             <artifactId>cronos-core</artifactId>
         </dependency>
         <dependency>
@@ -121,6 +121,27 @@
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>io.github.ibrahimbayramli:cronos-core</include>
+                                </includes>
+                            </artifactSet>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
