@@ -12,3 +12,6 @@ target/
 *.log
 data/
 .DS_Store
+node_modules/
+dist/
+cronos-dashboard/node/

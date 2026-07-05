@@ -1,6 +1,6 @@
 # Cronos
 
-**Cronos** is a Spring Boot observability starter that passively discovers, tracks, and exposes scheduled jobs — regardless of how they were defined (`@Scheduled`, Quartz, etc.). Existing job code stays unchanged; Cronos finds jobs at runtime and surfaces them through a REST API (and eventually a dashboard).
+**Cronos** is a Spring Boot observability starter that passively discovers, tracks, and exposes scheduled jobs — regardless of how they were defined (`@Scheduled`, Quartz, etc.). Existing job code stays unchanged; Cronos finds jobs at runtime and surfaces them through a REST API and an embedded dashboard UI.
 
 ## Architecture
 
@@ -13,6 +13,7 @@ cronos-spring-boot-starter
   ├── Execution Tracker (AOP / listeners)
   ├── Manual Trigger Service
   ├── REST API  (/cronos/api/**)
+  ├── Embedded Dashboard UI (/cronos/**)
   └── Job history persistence (H2 by default)
 ```
 
@@ -21,7 +22,8 @@ cronos-spring-boot-starter
 | Module | Description |
 |---|---|
 | `cronos-core` | Domain entities (`JobDescriptor`, `JobExecution`) and `JobSourceAdapter` SPI |
-| `cronos-spring-boot-starter` | Auto-configuration, Spring `@Scheduled` adapter, REST API |
+| `cronos-spring-boot-starter` | Auto-configuration, Spring `@Scheduled` adapter, REST API, embedded UI |
+| `cronos-dashboard` | React/Vite dashboard UI |
 
 ## Quick Start
 
@@ -45,7 +47,12 @@ public class MyApplication { ... }
 
 ### 3. Run and explore
 
-Cronos auto-configures an embedded H2 database (zero extra config) and exposes:
+Cronos auto-configures an embedded H2 database (zero extra config). When your app starts, both the API and dashboard are available:
+
+| What | URL |
+|---|---|
+| Dashboard UI | `http://localhost:8080/cronos/` |
+| REST API | `http://localhost:8080/cronos/api/**` |
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -61,6 +68,8 @@ Cronos auto-configures an embedded H2 database (zero extra config) and exposes:
 cronos:
   enabled: true
   api-base-path: /cronos/api
+  ui-enabled: true
+  ui-base-path: /cronos
   execution-retention: 90d
   manual-trigger-pool-size: 4
   datasource:
@@ -81,10 +90,10 @@ Implemented phases:
 - **Faz 2** — AOP execution tracking with JPA persistence (Flyway + H2)
 - **Faz 3** — Manual trigger via reflection (separate thread pool)
 - **Faz 4** — REST API endpoints
+- **Faz 5** — React/Vite dashboard MVP, embedded in starter JAR (`/cronos/`)
 
 Planned next:
 
-- **Faz 5** — React/Vite dashboard MVP
 - **Faz 6** — WebSocket live updates
 - **Faz 7** — Quartz adapter
 - **Faz 8** — Auth (API key / JWT)
@@ -105,7 +114,25 @@ Planned next:
 mvn clean verify
 ```
 
-Requires Java 17+.
+Requires Java 17+. The dashboard is built automatically during `mvn package` and bundled into the starter JAR.
+
+To skip the frontend build (e.g. faster CI without UI):
+
+```bash
+mvn clean verify -Dcronos.ui.build.skip=true
+```
+
+### Standalone dashboard development
+
+For UI-only development with hot reload:
+
+```bash
+cd cronos-dashboard
+npm install
+npm run dev
+```
+
+See [cronos-dashboard/README.md](cronos-dashboard/README.md) for details.
 
 ## License
 

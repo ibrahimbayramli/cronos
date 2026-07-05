@@ -15,6 +15,10 @@ public class CronosProperties {
 
     private String apiBasePath = "/cronos/api";
 
+    private boolean uiEnabled = true;
+
+    private String uiBasePath = "/cronos";
+
     private Duration executionRetention = Duration.ofDays(90);
 
     private int manualTriggerPoolSize = 4;
