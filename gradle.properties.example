@@ -1,0 +1,9 @@
+# Copy to ~/.gradle/gradle.properties (consumer)
+# or project-local gradle.properties (not committed)
+
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_GITHUB_TOKEN_WITH_read_packages
+
+# Maintainer publish (CI uses GITHUB_ACTOR / GITHUB_TOKEN)
+# github.actor=YOUR_GITHUB_USERNAME
+# github.token=YOUR_GITHUB_TOKEN_WITH_write_packages
