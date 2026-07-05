@@ -11,8 +11,10 @@ logging:
   level:
     dev.cronos: INFO
 
-# Demo job schedules — override as needed without code changes
+# Override demo job schedules in your own application.yml or via env/CLI:
+#   sample.jobs.heartbeat-cron: "0 0 * * * *"
+#   sample.jobs.cleanup-fixed-rate: 120000
 sample:
   jobs:
-    heartbeat-cron: "0 */5 * * * *"   # every 5 minutes
-    cleanup-fixed-rate: 60s
+    heartbeat-cron: "0 */5 * * * *"
+    cleanup-fixed-rate: 60000

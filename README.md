@@ -84,11 +84,13 @@ When no `DataSource` bean is present, Cronos provisions an embedded H2 database 
 
 ### Sample app job schedules
 
+Defaults are embedded in `@Scheduled` annotations; override via `application.yml`:
+
 ```yaml
 sample:
   jobs:
-    heartbeat-cron: "0 */5 * * * *"   # cron expression
-    cleanup-fixed-rate: 60s           # fixed-rate interval
+    heartbeat-cron: "0 */5 * * * *"   # cron — default: every 5 minutes
+    cleanup-fixed-rate: 60000          # fixed rate in ms — default: 60 seconds
 ```
 
 ## Current Status (v0.1.0-SNAPSHOT)
