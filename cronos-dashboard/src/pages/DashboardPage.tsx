@@ -1,12 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Activity, AlertTriangle, CheckCircle2, Clock3 } from 'lucide-react'
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Empty,
+  Row,
+  Spin,
+  Statistic,
+  Typography,
+} from 'antd'
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  DashboardOutlined,
+  WarningOutlined,
+} from '@ant-design/icons'
 import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import type { HealthResponse, JobSummary } from '../api/types'
-import { StatCard } from '../components/StatCard'
 import { JobTable } from '../components/JobTable'
-import { LoadingSpinner } from '../components/LoadingSpinner'
-import { EmptyState } from '../components/EmptyState'
 import { formatRelative } from '../utils/format'
 
 export function DashboardPage() {
@@ -36,28 +49,35 @@ export function DashboardPage() {
   }, [load])
 
   if (loading && !health) {
-    return <LoadingSpinner label="Dashboard yükleniyor..." />
+    return (
+      <div style={{ textAlign: 'center', padding: 80 }}>
+        <Spin size="large" tip="Dashboard yükleniyor..." />
+      </div>
+    )
   }
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-6 text-center">
-        <AlertTriangle className="mx-auto h-8 w-8 text-rose-400" />
-        <h2 className="mt-3 font-medium text-rose-300">API bağlantısı kurulamadı</h2>
-        <p className="mt-2 text-sm text-slate-400">{error}</p>
-        <p className="mt-4 text-xs text-slate-500">
-          Spring Boot uygulamanızın çalıştığından ve Cronos API&apos;nin{' '}
-          <code className="rounded bg-slate-800 px-1.5 py-0.5">/cronos/api</code> altında
-          erişilebilir olduğundan emin olun.
-        </p>
-        <button
-          type="button"
-          onClick={load}
-          className="mt-4 rounded-xl bg-slate-800 px-4 py-2 text-sm text-slate-200 hover:bg-slate-700"
-        >
-          Tekrar Dene
-        </button>
-      </div>
+      <Alert
+        type="error"
+        showIcon
+        message="API bağlantısı kurulamadı"
+        description={
+          <>
+            <Typography.Paragraph style={{ marginBottom: 8 }}>{error}</Typography.Paragraph>
+            <Typography.Text type="secondary">
+              Spring Boot uygulamanızın çalıştığından ve Cronos API&apos;nin{' '}
+              <Typography.Text code>/cronos/api</Typography.Text> altında erişilebilir
+              olduğundan emin olun.
+            </Typography.Text>
+          </>
+        }
+        action={
+          <Button size="small" onClick={load}>
+            Tekrar Dene
+          </Button>
+        }
+      />
     )
   }
 
@@ -73,71 +93,76 @@ export function DashboardPage() {
     .slice(0, 5)
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Genel Bakış</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <Typography.Title level={3} style={{ margin: 0 }}>
+          Genel Bakış
+        </Typography.Title>
+        <Typography.Text type="secondary">
           Keşfedilen scheduled job&apos;ların anlık durumu
-          {health && (
-            <span className="ml-2 text-slate-500">
-              · Son güncelleme {formatRelative(health.timestamp)}
-            </span>
-          )}
-        </p>
+          {health && <> · Son güncelleme {formatRelative(health.timestamp)}</>}
+        </Typography.Text>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title="Keşfedilen Job"
-          value={health?.discoveredJobs ?? 0}
-          subtitle={`Sistem durumu: ${health?.status ?? '—'}`}
-          icon={Activity}
-          accent="cyan"
-        />
-        <StatCard
-          title="Başarılı"
-          value={successCount}
-          subtitle="Son çalışmada başarılı"
-          icon={CheckCircle2}
-          accent="emerald"
-        />
-        <StatCard
-          title="Hatalı"
-          value={failedCount}
-          subtitle="Son çalışmada hata"
-          icon={AlertTriangle}
-          accent="rose"
-        />
-        <StatCard
-          title="Çalışıyor"
-          value={runningCount}
-          subtitle="Aktif execution"
-          icon={Clock3}
-          accent="amber"
-        />
-      </div>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} xl={6}>
+          <Card>
+            <Statistic
+              title="Keşfedilen Job"
+              value={health?.discoveredJobs ?? 0}
+              prefix={<DashboardOutlined />}
+              suffix={
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  {health?.status}
+                </Typography.Text>
+              }
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} xl={6}>
+          <Card>
+            <Statistic
+              title="Başarılı"
+              value={successCount}
+              valueStyle={{ color: '#52c41a' }}
+              prefix={<CheckCircleOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} xl={6}>
+          <Card>
+            <Statistic
+              title="Hatalı"
+              value={failedCount}
+              valueStyle={{ color: '#ff4d4f' }}
+              prefix={<WarningOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} xl={6}>
+          <Card>
+            <Statistic
+              title="Çalışıyor"
+              value={runningCount}
+              valueStyle={{ color: '#faad14' }}
+              prefix={<ClockCircleOutlined />}
+            />
+          </Card>
+        </Col>
+      </Row>
 
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-white">Son Çalışan Joblar</h2>
-          <Link
-            to="/jobs"
-            className="text-sm text-cyan-400 transition hover:text-cyan-300"
-          >
-            Tümünü gör →
-          </Link>
-        </div>
-
+      <Card
+        title="Son Çalışan Joblar"
+        extra={<Link to="/jobs">Tümünü gör →</Link>}
+      >
         {recentJobs.length === 0 ? (
-          <EmptyState
-            icon={Activity}
-            title="Henüz job bulunamadı"
+          <Empty
             description="@Scheduled ile tanımlı job'lar uygulama başladığında otomatik keşfedilir."
           />
         ) : (
           <JobTable jobs={recentJobs} />
         )}
-      </section>
+      </Card>
     </div>
   )
 }

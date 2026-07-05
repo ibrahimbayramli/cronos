@@ -6,9 +6,8 @@ Modern React dashboard for [Cronos](../README.md) job observability.
 
 - React 19 + TypeScript
 - Vite 8
-- Tailwind CSS 4
+- Ant Design 5 (dark theme, Turkish locale)
 - React Router
-- Lucide icons
 
 ## Features
 

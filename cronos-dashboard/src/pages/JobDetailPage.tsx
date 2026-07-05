@@ -1,13 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ChevronLeft, ChevronRight, History } from 'lucide-react'
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Descriptions,
+  Empty,
+  message,
+  Pagination,
+  Row,
+  Spin,
+  Tag,
+  Typography,
+} from 'antd'
+import { ArrowLeftOutlined, HistoryOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import { api } from '../api/client'
 import type { JobDetail, JobExecution } from '../api/types'
-import { StatusBadge } from '../components/StatusBadge'
 import { ExecutionTable } from '../components/ExecutionTable'
-import { TriggerButton } from '../components/TriggerButton'
-import { LoadingSpinner } from '../components/LoadingSpinner'
-import { EmptyState } from '../components/EmptyState'
+import { StatusTag } from '../components/StatusTag'
 import {
   formatDateTime,
   formatDuration,
@@ -22,8 +33,10 @@ export function JobDetailPage() {
   const [job, setJob] = useState<JobDetail | null>(null)
   const [executions, setExecutions] = useState<JobExecution[]>([])
   const [page, setPage] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
+  const [totalElements, setTotalElements] = useState(0)
+  const [pageSize] = useState(20)
   const [loading, setLoading] = useState(true)
+  const [triggering, setTriggering] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -38,7 +51,7 @@ export function JobDetailPage() {
       ])
       setJob(jobData)
       setExecutions(executionsData.content)
-      setTotalPages(executionsData.totalPages)
+      setTotalElements(executionsData.totalElements)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Job detayı yüklenemedi')
     } finally {
@@ -50,153 +63,161 @@ export function JobDetailPage() {
     load()
   }, [load])
 
+  async function handleTrigger() {
+    if (!job) return
+
+    setTriggering(true)
+    try {
+      const result = await api.triggerJob(job.id)
+      message.success(result.message || 'Job tetiklendi')
+      load()
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : 'Tetikleme başarısız')
+    } finally {
+      setTriggering(false)
+    }
+  }
+
   if (loading && !job) {
-    return <LoadingSpinner label="Job detayı yükleniyor..." />
+    return (
+      <div style={{ textAlign: 'center', padding: 80 }}>
+        <Spin size="large" tip="Job detayı yükleniyor..." />
+      </div>
+    )
   }
 
   if (error || !job) {
     return (
-      <div className="space-y-4">
-        <Link
-          to="/jobs"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Joblara dön
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Link to="/jobs">
+          <Button type="link" icon={<ArrowLeftOutlined />} style={{ padding: 0 }}>
+            Joblara dön
+          </Button>
         </Link>
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-6 text-center text-rose-300">
-          {error || 'Job bulunamadı'}
-        </div>
+        <Alert type="error" message={error || 'Job bulunamadı'} showIcon />
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <Link
-          to="/jobs"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-200"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Joblara dön
+        <Link to="/jobs">
+          <Button type="link" icon={<ArrowLeftOutlined />} style={{ padding: 0, marginBottom: 8 }}>
+            Joblara dön
+          </Button>
         </Link>
 
-        <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}
+        >
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold tracking-tight text-white">{job.name}</h1>
-              <StatusBadge status={job.lastStatus} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Typography.Title level={3} style={{ margin: 0 }}>
+                {job.name}
+              </Typography.Title>
+              <StatusTag status={job.lastStatus} />
             </div>
-            <p className="mt-2 font-mono text-sm text-slate-500">
+            <Typography.Text type="secondary" style={{ fontFamily: 'monospace' }}>
               {job.beanName}.{job.methodOrClass}
-            </p>
+            </Typography.Text>
           </div>
-          <TriggerButton jobId={job.id} onTriggered={load} />
+
+          <Button
+            type="primary"
+            icon={<PlayCircleOutlined />}
+            loading={triggering}
+            onClick={handleTrigger}
+          >
+            Manuel Tetikle
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Row gutter={[16, 16]}>
         {[
           { label: 'Kaynak', value: formatSourceType(job.sourceType) },
           { label: 'Trigger', value: job.triggerInfo },
           { label: 'Toplam Çalışma', value: job.totalExecutions.toString() },
           { label: 'Son Süre', value: formatDuration(job.lastDurationMs) },
         ].map((item) => (
-          <div key={item.label} className="glass rounded-2xl p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              {item.label}
-            </p>
-            <p className="mt-2 text-sm font-medium text-slate-200">{item.value}</p>
-          </div>
+          <Col key={item.label} xs={24} sm={12} lg={6}>
+            <Card size="small">
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                {item.label}
+              </Typography.Text>
+              <Typography.Paragraph strong style={{ margin: '4px 0 0' }}>
+                {item.value}
+              </Typography.Paragraph>
+            </Card>
+          </Col>
         ))}
-      </div>
+      </Row>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="glass rounded-2xl p-5 lg:col-span-1">
-          <h3 className="text-sm font-medium text-slate-400">Zamanlama</h3>
-          <dl className="mt-4 space-y-4 text-sm">
-            <div>
-              <dt className="text-slate-500">Keşfedilme</dt>
-              <dd className="mt-1 text-slate-200">{formatDateTime(job.discoveredAt)}</dd>
-            </div>
-            <div>
-              <dt className="text-slate-500">Son Çalışma</dt>
-              <dd className="mt-1 text-slate-200">
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={8}>
+          <Card title="Zamanlama" size="small">
+            <Descriptions column={1} size="small">
+              <Descriptions.Item label="Keşfedilme">
+                {formatDateTime(job.discoveredAt)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Son Çalışma">
                 {formatDateTime(job.lastRunAt)}
-                <span className="ml-2 text-xs text-slate-500">
+                <Typography.Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
                   {formatRelative(job.lastRunAt)}
-                </span>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-slate-500">Sonraki Çalışma</dt>
-              <dd className="mt-1 text-slate-200">
+                </Typography.Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Sonraki Çalışma">
                 {formatDateTime(job.nextRunAt)}
-                <span className="ml-2 text-xs text-slate-500">
+                <Typography.Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
                   {formatRelative(job.nextRunAt)}
-                </span>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-slate-500">Durum</dt>
-              <dd className="mt-1">
-                <span
-                  className={`inline-flex rounded-md px-2 py-1 text-xs ${
-                    job.enabled
-                      ? 'bg-emerald-500/10 text-emerald-400'
-                      : 'bg-slate-800 text-slate-500'
-                  }`}
-                >
+                </Typography.Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Durum">
+                <Tag color={job.enabled ? 'success' : 'default'}>
                   {job.enabled ? 'Aktif' : 'Pasif'}
-                </span>
-              </dd>
-            </div>
-          </dl>
-        </div>
+                </Tag>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
 
-        <div className="lg:col-span-2">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-lg font-medium text-white">
-              <History className="h-5 w-5 text-slate-400" />
-              Çalışma Geçmişi
-            </h2>
-            {totalPages > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.max(0, p - 1))}
-                  disabled={page === 0}
-                  className="rounded-lg border border-slate-700 p-1.5 text-slate-400 hover:text-white disabled:opacity-40"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-xs text-slate-500">
-                  Sayfa {page + 1} / {totalPages}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="rounded-lg border border-slate-700 p-1.5 text-slate-400 hover:text-white disabled:opacity-40"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
+        <Col xs={24} lg={16}>
+          <Card
+            title={
+              <span>
+                <HistoryOutlined style={{ marginRight: 8 }} />
+                Çalışma Geçmişi
+              </span>
+            }
+          >
+            {executions.length === 0 ? (
+              <Empty description="Job ilk çalıştığında veya manuel tetiklendiğinde kayıtlar burada görünecek." />
+            ) : (
+              <>
+                <ExecutionTable executions={executions} loading={loading} />
+                {totalElements > pageSize && (
+                  <div style={{ marginTop: 16, textAlign: 'right' }}>
+                    <Pagination
+                      current={page + 1}
+                      total={totalElements}
+                      pageSize={pageSize}
+                      showSizeChanger={false}
+                      onChange={(p) => setPage(p - 1)}
+                    />
+                  </div>
+                )}
+              </>
             )}
-          </div>
-
-          {executions.length === 0 ? (
-            <EmptyState
-              icon={History}
-              title="Henüz çalışma kaydı yok"
-              description="Job ilk çalıştığında veya manuel tetiklendiğinde kayıtlar burada görünecek."
-            />
-          ) : (
-            <ExecutionTable executions={executions} />
-          )}
-        </div>
-      </div>
+          </Card>
+        </Col>
+      </Row>
     </div>
   )
 }
