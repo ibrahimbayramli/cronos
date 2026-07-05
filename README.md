@@ -73,9 +73,23 @@ cronos:
   api-base-path: /cronos/api
   execution-retention: 90d
   manual-trigger-pool-size: 4
+  datasource:
+    url: jdbc:h2:file:./data/cronos;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
 ```
 
-When no `DataSource` bean is present, Cronos provisions an embedded H2 database at `./data/cronos`.
+When no `DataSource` bean is present, Cronos provisions an embedded H2 database using `cronos.datasource.*` (defaults above).
+
+### Sample app job schedules
+
+```yaml
+sample:
+  jobs:
+    heartbeat-cron: "0 */5 * * * *"   # cron expression
+    cleanup-fixed-rate: 60s           # fixed-rate interval
+```
 
 ## Current Status (v0.1.0-SNAPSHOT)
 

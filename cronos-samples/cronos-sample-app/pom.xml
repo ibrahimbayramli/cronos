@@ -24,6 +24,11 @@
             <groupId>dev.cronos</groupId>
             <artifactId>cronos-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,22 +1,30 @@
 package dev.cronos.sample;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
+import dev.cronos.sample.config.SampleJobProperties;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
-public class SampleJobs {
+@RequiredArgsConstructor
+public class SampleJobs implements SchedulingConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(SampleJobs.class);
+    private final SampleJobProperties properties;
 
-    @Scheduled(cron = "0 */5 * * * *")
-    public void heartbeat() {
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.addCronTask(this::heartbeat, properties.getHeartbeatCron());
+        taskRegistrar.addFixedRateTask(this::cleanup, properties.getCleanupFixedRate());
+    }
+
+    void heartbeat() {
         log.info("Heartbeat job executed");
     }
 
-    @Scheduled(fixedRate = 60_000)
-    public void cleanup() {
+    void cleanup() {
         log.info("Cleanup job executed");
     }
 }

@@ -10,3 +10,9 @@ server:
 logging:
   level:
     dev.cronos: INFO
+
+# Demo job schedules — override as needed without code changes
+sample:
+  jobs:
+    heartbeat-cron: "0 */5 * * * *"   # every 5 minutes
+    cleanup-fixed-rate: 60s
