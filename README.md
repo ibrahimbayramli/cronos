@@ -22,6 +22,7 @@ cronos-spring-boot-starter
 |---|---|
 | `cronos-core` | Domain entities (`JobDescriptor`, `JobExecution`) and `JobSourceAdapter` SPI |
 | `cronos-spring-boot-starter` | Auto-configuration, Spring `@Scheduled` adapter, REST API |
+| `cronos-dashboard` | React/Vite dashboard UI |
 
 ## Quick Start
 
@@ -81,10 +82,10 @@ Implemented phases:
 - **Faz 2** — AOP execution tracking with JPA persistence (Flyway + H2)
 - **Faz 3** — Manual trigger via reflection (separate thread pool)
 - **Faz 4** — REST API endpoints
+- **Faz 5** — React/Vite dashboard MVP (`cronos-dashboard/`)
 
 Planned next:
 
-- **Faz 5** — React/Vite dashboard MVP
 - **Faz 6** — WebSocket live updates
 - **Faz 7** — Quartz adapter
 - **Faz 8** — Auth (API key / JWT)
@@ -106,6 +107,16 @@ mvn clean verify
 ```
 
 Requires Java 17+.
+
+### Dashboard
+
+```bash
+cd cronos-dashboard
+npm install
+npm run dev
+```
+
+See [cronos-dashboard/README.md](cronos-dashboard/README.md) for details.
 
 ## License
 
