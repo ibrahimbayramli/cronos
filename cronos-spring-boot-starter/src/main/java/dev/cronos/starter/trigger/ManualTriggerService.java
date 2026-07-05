@@ -76,47 +76,8 @@ public class ManualTriggerService {
     private DiscoveredJob resolveDiscoveredJob(JobDescriptor job) {
         if (job.getSourceType() == JobSourceType.SPRING_SCHEDULED) {
             return springScheduledJobAdapter.findDiscoveredJob(job.getName())
-                    .orElseGet(() -> fallbackDiscoveredJob(job));
+                    .orElseGet(() -> DiscoveredJob.fromDescriptor(job));
         }
-        return fallbackDiscoveredJob(job);
-    }
-
-    private DiscoveredJob fallbackDiscoveredJob(JobDescriptor job) {
-        return new DiscoveredJob(
-                job.getName(),
-                job.getBeanName(),
-                job.getMethodOrClass(),
-                job.getTriggerInfo(),
-                null,
-                extractMethodName(job.getName())
-        );
-    }
-
-    private String extractMethodName(String jobName) {
-        int separator = jobName.indexOf('#');
-        return separator >= 0 ? jobName.substring(separator + 1) : jobName;
-    }
-
-    public record TriggerResult(
-            Status status,
-            Long jobId,
-            String jobName,
-            Long executionId,
-            String message
-    ) {
-        public enum Status {
-            STARTED,
-            ALREADY_RUNNING
-        }
-
-        public static TriggerResult started(Long jobId, String jobName, Long executionId) {
-            return new TriggerResult(Status.STARTED, jobId, jobName, executionId,
-                    "Manual execution started");
-        }
-
-        public static TriggerResult alreadyRunning(Long jobId, String jobName) {
-            return new TriggerResult(Status.ALREADY_RUNNING, jobId, jobName, null,
-                    "Job is already running");
-        }
+        return DiscoveredJob.fromDescriptor(job);
     }
 }

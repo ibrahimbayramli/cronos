@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +22,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JobDescriptor {
 
     @Id
@@ -42,9 +46,11 @@ public class JobDescriptor {
     @Column(name = "trigger_info", length = 512)
     private String triggerInfo;
 
+    @Builder.Default
     @Column(name = "discovered_at", nullable = false)
     private Instant discoveredAt = Instant.now();
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;
 }

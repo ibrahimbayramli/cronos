@@ -70,21 +70,7 @@ public class JobQueryService {
         long totalExecutions = jobExecutionRepository.findByJobOrderByStartedAtDesc(job, Pageable.unpaged())
                 .getTotalElements();
 
-        return JobDetailResponse.builder()
-                .id(summary.getId())
-                .name(summary.getName())
-                .sourceType(summary.getSourceType())
-                .beanName(summary.getBeanName())
-                .methodOrClass(summary.getMethodOrClass())
-                .triggerInfo(summary.getTriggerInfo())
-                .discoveredAt(summary.getDiscoveredAt())
-                .enabled(summary.isEnabled())
-                .lastRunAt(summary.getLastRunAt())
-                .lastStatus(summary.getLastStatus())
-                .lastDurationMs(summary.getLastDurationMs())
-                .nextRunAt(summary.getNextRunAt())
-                .totalExecutions(totalExecutions)
-                .build();
+        return JobDetailResponse.from(summary, totalExecutions);
     }
 
     private JobExecutionResponse toExecutionResponse(JobExecution execution) {

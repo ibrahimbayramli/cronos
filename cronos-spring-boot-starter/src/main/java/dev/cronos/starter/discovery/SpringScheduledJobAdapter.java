@@ -43,7 +43,7 @@ public class SpringScheduledJobAdapter implements JobSourceAdapter {
         applicationContext.getBeansOfType(ScheduledTaskHolder.class).values().forEach(holder -> {
             for (ScheduledTask scheduledTask : holder.getScheduledTasks()) {
                 extractJob(scheduledTask).ifPresent(job -> {
-                    discoveredJobs.put(job.name(), job);
+                    discoveredJobs.put(job.getName(), job);
                     jobs.add(job);
                 });
             }
@@ -55,25 +55,25 @@ public class SpringScheduledJobAdapter implements JobSourceAdapter {
 
     @Override
     public Optional<Instant> getNextRunTime(DiscoveredJob job) {
-        return NextRunCalculator.calculate(job.triggerInfo());
+        return NextRunCalculator.calculate(job.getTriggerInfo());
     }
 
     @Override
     public void triggerNow(DiscoveredJob job) {
-        Object target = job.target();
-        if (target == null && job.beanName() != null) {
-            target = applicationContext.getBean(job.beanName());
+        Object target = job.getTarget();
+        if (target == null && job.getBeanName() != null) {
+            target = applicationContext.getBean(job.getBeanName());
         }
-        String methodName = job.methodName();
+        String methodName = job.getMethodName();
         if (target == null || methodName == null) {
-            throw new IllegalStateException("Cannot trigger job without target reference: " + job.name());
+            throw new IllegalStateException("Cannot trigger job without target reference: " + job.getName());
         }
         try {
             Method method = findMethod(target.getClass(), methodName);
             method.setAccessible(true);
             method.invoke(target);
         } catch (ReflectiveOperationException ex) {
-            throw new IllegalStateException("Failed to invoke scheduled method for job: " + job.name(), ex);
+            throw new IllegalStateException("Failed to invoke scheduled method for job: " + job.getName(), ex);
         }
     }
 
@@ -95,14 +95,14 @@ public class SpringScheduledJobAdapter implements JobSourceAdapter {
         String jobName = JobNaming.resolve(applicationContext, target, method);
         String triggerInfo = describeTrigger(method);
 
-        return Optional.of(new DiscoveredJob(
-                jobName,
-                beanName,
-                method.getDeclaringClass().getSimpleName() + "." + method.getName(),
-                triggerInfo,
-                target,
-                method.getName()
-        ));
+        return Optional.of(DiscoveredJob.builder()
+                .name(jobName)
+                .beanName(beanName)
+                .methodOrClass(method.getDeclaringClass().getSimpleName() + "." + method.getName())
+                .triggerInfo(triggerInfo)
+                .target(target)
+                .methodName(method.getName())
+                .build());
     }
 
     private String describeTrigger(Method method) {

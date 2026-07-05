@@ -46,16 +46,14 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
     }
 
     private void persistDiscoveredJob(JobSourceAdapter adapter, DiscoveredJob discovered) {
-        JobDescriptor descriptor = jobDescriptorRepository.findByName(discovered.name())
-                .orElseGet(() -> {
-                    JobDescriptor created = new JobDescriptor();
-                    created.setName(discovered.name());
-                    created.setSourceType(adapter.getSourceType());
-                    created.setBeanName(discovered.beanName());
-                    created.setMethodOrClass(discovered.methodOrClass());
-                    created.setTriggerInfo(discovered.triggerInfo());
-                    return created;
-                });
+        JobDescriptor descriptor = jobDescriptorRepository.findByName(discovered.getName())
+                .orElseGet(() -> JobDescriptor.builder()
+                        .name(discovered.getName())
+                        .sourceType(adapter.getSourceType())
+                        .beanName(discovered.getBeanName())
+                        .methodOrClass(discovered.getMethodOrClass())
+                        .triggerInfo(discovered.getTriggerInfo())
+                        .build());
 
         if (descriptor.getId() == null) {
             descriptor = jobDescriptorRepository.save(descriptor);
@@ -65,32 +63,18 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
     }
 
     private void updateNextRun(JobSourceAdapter adapter, JobDescriptor descriptor) {
-        DiscoveredJob discovered = new DiscoveredJob(
-                descriptor.getName(),
-                descriptor.getBeanName(),
-                descriptor.getMethodOrClass(),
-                descriptor.getTriggerInfo(),
-                null,
-                extractMethodName(descriptor.getName())
-        );
-        updateNextRun(adapter, discovered, descriptor);
+        updateNextRun(adapter, DiscoveredJob.fromDescriptor(descriptor), descriptor);
     }
 
     private void updateNextRun(JobSourceAdapter adapter, DiscoveredJob discovered,
                                JobDescriptor descriptor) {
         Instant nextRun = adapter.getNextRunTime(discovered).orElse(null);
         JobNextRun jobNextRun = jobNextRunRepository.findByJob(descriptor)
-                .orElseGet(() -> {
-                    JobNextRun created = new JobNextRun();
-                    created.setJob(descriptor);
-                    return created;
-                });
-        jobNextRun.setCalculatedNextRunAt(nextRun);
+                .map(existing -> existing.toBuilder().calculatedNextRunAt(nextRun).build())
+                .orElseGet(() -> JobNextRun.builder()
+                        .job(descriptor)
+                        .calculatedNextRunAt(nextRun)
+                        .build());
         jobNextRunRepository.save(jobNextRun);
-    }
-
-    private String extractMethodName(String jobName) {
-        int separator = jobName.indexOf('#');
-        return separator >= 0 ? jobName.substring(separator + 1) : jobName;
     }
 }

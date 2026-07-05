@@ -24,4 +24,22 @@ public class JobDetailResponse {
     private final Long lastDurationMs;
     private final Instant nextRunAt;
     private final long totalExecutions;
+
+    public static JobDetailResponse from(JobSummaryResponse summary, long totalExecutions) {
+        return builder()
+                .id(summary.getId())
+                .name(summary.getName())
+                .sourceType(summary.getSourceType())
+                .beanName(summary.getBeanName())
+                .methodOrClass(summary.getMethodOrClass())
+                .triggerInfo(summary.getTriggerInfo())
+                .discoveredAt(summary.getDiscoveredAt())
+                .enabled(summary.isEnabled())
+                .lastRunAt(summary.getLastRunAt())
+                .lastStatus(summary.getLastStatus())
+                .lastDurationMs(summary.getLastDurationMs())
+                .nextRunAt(summary.getNextRunAt())
+                .totalExecutions(totalExecutions)
+                .build();
+    }
 }

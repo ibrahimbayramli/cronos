@@ -7,6 +7,7 @@ import dev.cronos.starter.api.dto.JobSummaryResponse;
 import dev.cronos.starter.api.dto.TriggerResponse;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.trigger.ManualTriggerService;
+import dev.cronos.starter.trigger.TriggerResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,13 +49,13 @@ public class JobController {
 
     @PostMapping("/jobs/{id}/trigger")
     public TriggerResponse triggerJob(@PathVariable("id") Long id) {
-        ManualTriggerService.TriggerResult result = manualTriggerService.trigger(id);
+        TriggerResult result = manualTriggerService.trigger(id);
         return TriggerResponse.builder()
-                .status(result.status().name())
-                .jobId(result.jobId())
-                .jobName(result.jobName())
-                .executionId(result.executionId())
-                .message(result.message())
+                .status(result.getStatus().name())
+                .jobId(result.getJobId())
+                .jobName(result.getJobName())
+                .executionId(result.getExecutionId())
+                .message(result.getMessage())
                 .build();
     }
 
