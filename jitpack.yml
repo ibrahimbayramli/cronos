@@ -1,0 +1,9 @@
+jdk:
+  - openjdk17
+
+before_install:
+  - sdk install java 17.0.12-tem || true
+  - sdk use java 17.0.12-tem || true
+
+install:
+  - mvn install -DskipTests --batch-mode

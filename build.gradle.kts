@@ -5,11 +5,12 @@ plugins {
 }
 
 group = "dev.cronos"
-version = "0.1.0"
+version = "0.1.1"
 
 val githubOwner = "ibrahimbayramli"
 val githubRepository = "cronos"
 val githubPackagesUrl = "https://maven.pkg.github.com/$githubOwner/$githubRepository"
+val starterArtifact = "cronos-spring-boot-starter"
 
 tasks.register<Exec>("mavenPackage") {
     group = "build"
@@ -49,11 +50,20 @@ tasks.register("publishToGitHubPackages") {
     dependsOn("mavenDeploy")
 }
 
+tasks.register("verifyConsumerJitPackSnippet") {
+    group = "verification"
+    description = "Prints JitPack coordinates (no GitHub token required)"
+    doLast {
+        println("Repository: https://jitpack.io")
+        println("Dependency: implementation(\"com.github.$githubOwner:$starterArtifact:$version\")")
+    }
+}
+
 tasks.register("verifyConsumerGradleSnippet") {
     group = "verification"
-    description = "Prints the Gradle coordinates for the published starter"
+    description = "Prints GitHub Packages Gradle coordinates"
     doLast {
-        println("implementation(\"dev.cronos:cronos-spring-boot-starter:$version\")")
+        println("implementation(\"${project.group}:cronos-spring-boot-starter:$version\")")
         println("Repository: $githubPackagesUrl")
     }
 }
