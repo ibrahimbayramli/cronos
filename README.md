@@ -33,7 +33,7 @@
 
 Spring Boot uygulamaları genellikle kritik arka plan işlerini `@Scheduled` ile çalıştırır; ancak gözlemlenebilirlik çoğu zaman sonradan düşünülür — merkezi bir iş listesi yoktur, çalıştırma geçmişi tutulmaz, manuel tetikleme için pratik bir yol bulunmaz.
 
-Cronos tek bir bağımlılık olarak devreye girer ve otomatik olarak şunları sağlar:
+Cronos starter bağımlılığı olarak devreye girer ve otomatik olarak şunları sağlar:
 
 | Özellik | Ne sunar |
 |---|---|
@@ -108,7 +108,7 @@ Cronos başlangıçta kontrol paneli ve API URL'lerini loglar.
 
 ## Yayınlanan artifaktlar
 
-Cronos **Maven Central** üzerinde yayınlanır — Jasypt gibi tek bir bağımlılık eklemeniz yeterlidir; ek depo veya token yapılandırması gerekmez.
+Cronos **Maven Central** üzerinde yayınlanır.
 
 <p align="center">
   <img src="docs/packages-flow.svg" alt="Maven ve Gradle, Cronos'u Maven Central üzerinden tüketir" width="720" />
@@ -116,7 +116,7 @@ Cronos **Maven Central** üzerinde yayınlanır — Jasypt gibi tek bir bağıml
 
 | Paket | Koordinatlar | Kullanım |
 |---|---|---|
-| **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Tek bağımlılık — otomatik yapılandırma, REST API, gömülü arayüz |
+| **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
 
 **Maven Central:** [com.github.ibrahimbayramli:cronos-spring-boot-starter](https://central.sonatype.com/artifact/com.github.ibrahimbayramli/cronos-spring-boot-starter)
 
@@ -127,8 +127,6 @@ Cronos **Maven Central** üzerinde yayınlanır — Jasypt gibi tek bir bağıml
 ---
 
 ## Projenize ekleyin
-
-Jasypt Spring Boot gibi `pom.xml` veya `build.gradle.kts` dosyanıza **yalnızca tek bir bağımlılık** eklemeniz yeterlidir. Maven Central varsayılan kayıt defterinden çözülür.
 
 ### Maven
 
@@ -283,7 +281,7 @@ mvn deploy -DskipTests -Prelease -s .github/maven/settings.xml
 - [x] Manuel tetikleme
 - [x] REST API
 - [x] Gömülü kontrol paneli arayüzü
-- [x] Maven Central (Jasypt tarzı `com.github.*` koordinatları)
+- [x] Maven Central (`com.github.*` koordinatları)
 - [ ] WebSocket ile canlı güncellemeler
 - [ ] Quartz adaptörü
 - [ ] API anahtarı / JWT kimlik doğrulama
