@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ibrahimbayramli/cronos/packages"><img src="https://img.shields.io/badge/GitHub%20Packages-Maven%20%26%20Gradle-24292f?style=flat-square&logo=github" alt="GitHub Packages" /></a>
-  <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=flat-square&label=release" alt="Release" /></a>
+  <a href="https://jitpack.io/#ibrahimbayramli/cronos"><img src="https://jitpack.io/v/ibrahimbayramli/cronos.svg?style=flat-square" alt="JitPack" /></a>
+  <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.1"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=flat-square&label=release" alt="Release" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/actions/workflows/publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/ibrahimbayramli/cronos/publish.yml?style=flat-square&label=Publish" alt="Publish workflow" /></a>
   <img src="https://img.shields.io/badge/Java-17+-blue?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17+" />
   <img src="https://img.shields.io/badge/Spring%20Boot-3.3-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 3.3" />
@@ -57,20 +57,70 @@ flowchart TB
 
 ---
 
-## Published artifacts
+## Quick install (no token required)
 
-Cronos is published to **GitHub Packages** and can be consumed from both **Maven** and **Gradle** projects.
+Add **one dependency** via [JitPack](https://jitpack.io/#ibrahimbayramli/cronos) — no GitHub username, password, or `settings.xml` needed.
 
-| Artifact | Coordinates | Purpose |
-|---|---|---|
-| Starter (use this) | `dev.cronos:cronos-spring-boot-starter:0.1.0` | Auto-config, API, embedded UI |
-| Core | `dev.cronos:cronos-core:0.1.0` | Domain models and SPI |
+### Maven
 
-**Registry URL:** `https://maven.pkg.github.com/ibrahimbayramli/cronos`
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.ibrahimbayramli</groupId>
+        <artifactId>cronos-spring-boot-starter</artifactId>
+        <version>v0.1.1</version>
+    </dependency>
+</dependencies>
+```
+
+### Gradle
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+}
+
+dependencies {
+    implementation("com.github.ibrahimbayramli:cronos-spring-boot-starter:v0.1.1")
+}
+```
+
+Enable scheduling and run:
+
+```java
+@SpringBootApplication
+@EnableScheduling
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}
+```
+
+Open **http://localhost:8080/cronos/** (or the port you configure below).
 
 ---
 
-## Installation
+## Published artifacts
+
+| Registry | Coordinates | Auth required |
+|---|---|---|
+| **JitPack** (recommended) | `com.github.ibrahimbayramli:cronos-spring-boot-starter:v0.1.1` | No |
+| GitHub Packages | `dev.cronos:cronos-spring-boot-starter:0.1.1` | Yes (`read:packages` token) |
+
+---
+
+## Installation (GitHub Packages)
+
+Use this only if you prefer GitHub Packages over JitPack.
 
 ### Prerequisites
 
@@ -113,7 +163,7 @@ Cronos is published to **GitHub Packages** and can be consumed from both **Maven
 <dependency>
     <groupId>dev.cronos</groupId>
     <artifactId>cronos-spring-boot-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -187,7 +237,7 @@ gpr.key=YOUR_GITHUB_TOKEN
 
 ```kotlin
 dependencies {
-    implementation("dev.cronos:cronos-spring-boot-starter:0.1.0")
+    implementation("dev.cronos:cronos-spring-boot-starter:0.1.1")
 }
 ```
 
@@ -216,8 +266,8 @@ Open **http://localhost:8080/cronos/**
 
 | Endpoint | URL |
 |---|---|
-| Dashboard UI | `http://localhost:8080/cronos/` |
-| REST API base | `http://localhost:8080/cronos/api` |
+| Dashboard UI | `http://localhost:{port}/cronos/` |
+| REST API base | `http://localhost:{port}/cronos/api` |
 | Job list | `GET /cronos/api/jobs` |
 | Job detail | `GET /cronos/api/jobs/{id}` |
 | Execution history | `GET /cronos/api/jobs/{id}/executions` |
@@ -233,6 +283,7 @@ On startup, Cronos logs the dashboard and API URLs automatically.
 ```yaml
 cronos:
   enabled: true
+  port: 9090                    # HTTP port for Cronos UI + API (see below)
   api-base-path: /cronos/api
   ui-enabled: true
   ui-base-path: /cronos
@@ -245,7 +296,33 @@ cronos:
     driver-class-name: org.h2.Driver
 ```
 
-When your app already has a `DataSource` bean, Cronos uses it. Otherwise it provisions embedded H2 with the settings above.
+### Port binding
+
+Cronos UI and API share the host Spring Boot web server. Configure the port in `application.yml`:
+
+| Scenario | Configuration | Result |
+|---|---|---|
+| Cronos-only / default | `cronos.port: 9090` | App listens on **9090** |
+| Existing app port | `server.port: 8080` | Cronos on **8080** (standard Spring Boot) |
+| Both ports | `server.port: 8080` + `cronos.port: 9090` | App on **8080**, Cronos also on **9090** (extra Tomcat connector) |
+
+```yaml
+# Example: run everything on port 9090
+cronos:
+  port: 9090
+```
+
+```yaml
+# Example: main app on 8080, Cronos also reachable on 9090
+server:
+  port: 8080
+cronos:
+  port: 9090
+```
+
+On startup, Cronos logs the dashboard and API URLs with the effective port.
+
+When your app already has a `DataSource` bean, Cronos uses it. Otherwise it provisions embedded H2 with the datasource settings above.
 
 ---
 
@@ -287,6 +364,8 @@ mvn deploy -DskipTests -s .github/maven/settings.xml
 - [x] REST API
 - [x] Embedded dashboard UI
 - [x] GitHub Packages (Maven & Gradle)
+- [x] JitPack (no-auth install)
+- [x] Configurable port (`cronos.port`)
 - [ ] WebSocket live updates
 - [ ] Quartz adapter
 - [ ] API key / JWT auth

@@ -25,12 +25,20 @@ public class CronosDashboardStartupLogger implements ApplicationListener<Applica
             return;
         }
 
-        int port = webContext.getWebServer().getPort();
+        int port = resolveAdvertisedPort(webContext, properties);
+        String host = "localhost";
         String uiPath = normalizePath(properties.getUiBasePath());
         String apiPath = properties.getApiBasePath();
 
-        log.info("Cronos dashboard ready at http://localhost:{}{}", port, uiPath);
-        log.info("Cronos API ready at http://localhost:{}{}", port, apiPath);
+        log.info("Cronos dashboard ready at http://{}:{}{}", host, port, uiPath);
+        log.info("Cronos API ready at http://{}:{}{}", host, port, apiPath);
+    }
+
+    private int resolveAdvertisedPort(WebServerApplicationContext webContext, CronosProperties properties) {
+        if (properties.getPort() != null) {
+            return properties.getPort();
+        }
+        return webContext.getWebServer().getPort();
     }
 
     private String normalizePath(String path) {

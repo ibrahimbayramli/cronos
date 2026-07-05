@@ -13,6 +13,14 @@ public class CronosProperties {
 
     private boolean enabled = true;
 
+    /**
+     * HTTP port for Cronos UI and API. When set and {@code server.port} is not
+     * configured, this value is applied to {@code server.port}. When both are
+     * set to different values, Cronos is also exposed on this port via an
+     * additional Tomcat connector.
+     */
+    private Integer port;
+
     private String apiBasePath = "/cronos/api";
 
     private boolean uiEnabled = true;

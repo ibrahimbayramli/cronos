@@ -43,7 +43,10 @@ Output is copied into the starter JAR during `mvn package` at `classpath:/static
 
 ```yaml
 cronos:
+  port: 9090
   ui-enabled: true
   ui-base-path: /cronos
   api-base-path: /cronos/api
 ```
+
+See the [main README](../README.md#port-binding) for port configuration details.

@@ -6,7 +6,7 @@
 
     <groupId>dev.cronos</groupId>
     <artifactId>cronos-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>pom</packaging>
 
     <name>Cronos</name>
@@ -33,7 +33,7 @@
         <connection>scm:git:git://github.com/ibrahimbayramli/cronos.git</connection>
         <developerConnection>scm:git:ssh://github.com/ibrahimbayramli/cronos.git</developerConnection>
         <url>https://github.com/ibrahimbayramli/cronos</url>
-        <tag>v0.1.0</tag>
+        <tag>v0.1.1</tag>
     </scm>
 
     <modules>
