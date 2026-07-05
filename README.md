@@ -3,7 +3,6 @@
 </p>
 
 <p align="center">
-  <a href="https://central.sonatype.com/artifact/com.github.ibrahimbayramli/cronos-spring-boot-starter"><img src="https://img.shields.io/badge/Maven%20Central-com.github.ibrahimbayramli-24292f?style=for-the-badge&logo=apachemaven" alt="Maven Central" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=for-the-badge&label=release&color=0891b2" alt="Release v0.1.0" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/actions/workflows/publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/ibrahimbayramli/cronos/publish.yml?style=for-the-badge&label=CI" alt="Publish workflow" /></a>
 </p>
@@ -108,17 +107,9 @@ Cronos başlangıçta kontrol paneli ve API URL'lerini loglar.
 
 ## Yayınlanan artifaktlar
 
-Cronos **Maven Central** üzerinde yayınlanır.
-
-<p align="center">
-  <img src="docs/packages-flow.svg" alt="Maven ve Gradle, Cronos'u Maven Central üzerinden tüketir" width="720" />
-</p>
-
 | Paket | Koordinatlar | Kullanım |
 |---|---|---|
 | **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
-
-**Maven Central:** [com.github.ibrahimbayramli:cronos-spring-boot-starter](https://central.sonatype.com/artifact/com.github.ibrahimbayramli/cronos-spring-boot-starter)
 
 **Kaynak:** [github.com/ibrahimbayramli/cronos](https://github.com/ibrahimbayramli/cronos)
 
@@ -236,30 +227,6 @@ mvn clean verify
 
 # Daha hızlı CI için arayüz derlemesini atla
 mvn clean verify -Dcronos.ui.build.skip=true
-
-# Yayın koordinatlarını göster
-./gradlew printPublishingInfo
-```
-
----
-
-## Yayınlama (bakımcılar)
-
-Artifaktlar her [GitHub Release](https://github.com/ibrahimbayramli/cronos/releases) yayınlandığında **Maven Central**'a gönderilir.
-
-**Ön koşullar:**
-- [Sonatype Central Portal](https://central.sonatype.com/) üzerinde `com.github.ibrahimbayramli` namespace'i
-- GitHub Actions secret'ları: `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD`, `GPG_PRIVATE_KEY`, `GPG_PASSPHRASE`
-
-**CI:** [`.github/workflows/publish.yml`](.github/workflows/publish.yml), bir release yayınlandığında `mvn deploy -Prelease` çalıştırır.
-
-**Yerel yayın:**
-
-```bash
-mvn deploy -DskipTests -Prelease -s .github/maven/settings.xml
-
-# veya Gradle wrapper üzerinden
-./gradlew publishToMavenCentral
 ```
 
 ---
@@ -281,7 +248,7 @@ mvn deploy -DskipTests -Prelease -s .github/maven/settings.xml
 - [x] Manuel tetikleme
 - [x] REST API
 - [x] Gömülü kontrol paneli arayüzü
-- [x] Maven Central (`com.github.*` koordinatları)
+- [ ] Maven Central (`com.github.*` koordinatları)
 - [ ] WebSocket ile canlı güncellemeler
 - [ ] Quartz adaptörü
 - [ ] API anahtarı / JWT kimlik doğrulama
