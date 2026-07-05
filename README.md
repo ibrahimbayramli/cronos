@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="Cronos — Spring Boot Job Observability" width="100%" />
+  <img src="docs/banner.svg" alt="Cronos — Job Observability" width="100%" />
 </p>
 
 <p align="center">
@@ -7,42 +7,41 @@
   <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.1"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=flat-square&label=release" alt="Release" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/actions/workflows/publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/ibrahimbayramli/cronos/publish.yml?style=flat-square&label=Publish" alt="Publish workflow" /></a>
   <img src="https://img.shields.io/badge/Java-17+-blue?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17+" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.3-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot 3.3" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT License" />
 </p>
 
 <p align="center">
-  <strong>Cronos</strong> is a zero-config Spring Boot starter that discovers your scheduled jobs at runtime,
-  tracks every execution, exposes a REST API, and ships a modern embedded dashboard — without changing your job code.
+  <strong>Cronos</strong> is a zero-config starter that discovers your scheduled jobs at runtime,
+  tracks every execution, exposes a REST API, and ships an embedded dashboard — without changing your job code.
 </p>
 
 ---
 
 ## What does Cronos do?
 
-You already have `@Scheduled` jobs in your Spring Boot app. Cronos plugs in as a dependency and automatically:
+You already have `@Scheduled` jobs in your app. Cronos plugs in as a dependency and automatically:
 
 | Capability | Description |
 |---|---|
 | **Discovery** | Finds all `@Scheduled` methods when the app starts |
 | **Tracking** | Records start/end time, duration, status, and errors |
-| **Dashboard** | Serves a React + Ant Design UI at `/cronos/` |
+| **Dashboard** | Serves an embedded UI at `/cronos/` |
 | **REST API** | Exposes jobs, history, health, and manual trigger at `/cronos/api` |
-| **Persistence** | Stores execution history in embedded H2 (zero config) or your own database |
+| **Persistence** | Stores execution history in an embedded database (zero config) or your own database |
 
 ```mermaid
 flowchart TB
-    subgraph App["Your Spring Boot Application"]
+    subgraph App["Your Application"]
         J1["@Scheduled job A"]
         J2["@Scheduled job B"]
     end
 
     subgraph Cronos["cronos-spring-boot-starter"]
         D["Job Discovery"]
-        T["Execution Tracker (AOP)"]
+        T["Execution Tracker"]
         API["REST API /cronos/api"]
         UI["Dashboard UI /cronos/"]
-        DB[("H2 / Postgres")]
+        DB[("Database")]
     end
 
     J1 --> D
@@ -126,7 +125,7 @@ Use this only if you prefer GitHub Packages over JitPack.
 
 1. A GitHub account with access to this repository
 2. A [Personal Access Token (classic)](https://github.com/settings/tokens) with `read:packages` scope
-3. Java 17+ and Spring Boot 3.x
+3. Java 17+
 
 ### Maven
 
@@ -298,13 +297,13 @@ cronos:
 
 ### Port binding
 
-Cronos UI and API share the host Spring Boot web server. Configure the port in `application.yml`:
+Cronos UI and API share the host application web server. Configure the port in `application.yml`:
 
 | Scenario | Configuration | Result |
 |---|---|---|
 | Cronos-only / default | `cronos.port: 9090` | App listens on **9090** |
-| Existing app port | `server.port: 8080` | Cronos on **8080** (standard Spring Boot) |
-| Both ports | `server.port: 8080` + `cronos.port: 9090` | App on **8080**, Cronos also on **9090** (extra Tomcat connector) |
+| Existing app port | `server.port: 8080` | Cronos on **8080** |
+| Both ports | `server.port: 8080` + `cronos.port: 9090` | App on **8080**, Cronos also on **9090** (additional connector) |
 
 ```yaml
 # Example: run everything on port 9090
@@ -322,7 +321,7 @@ cronos:
 
 On startup, Cronos logs the dashboard and API URLs with the effective port.
 
-When your app already has a `DataSource` bean, Cronos uses it. Otherwise it provisions embedded H2 with the datasource settings above.
+When your app already has a `DataSource` bean, Cronos uses it. Otherwise it provisions an embedded database with the datasource settings above.
 
 ---
 
@@ -332,7 +331,7 @@ When your app already has a `DataSource` bean, Cronos uses it. Otherwise it prov
 |---|---|
 | `cronos-core` | Domain entities and `JobSourceAdapter` SPI |
 | `cronos-spring-boot-starter` | Auto-configuration, REST API, embedded UI |
-| `cronos-dashboard` | React/Vite/Ant Design frontend (bundled into starter JAR) |
+| `cronos-dashboard` | Embedded dashboard UI (bundled into starter JAR) |
 
 ---
 
@@ -359,7 +358,7 @@ mvn deploy -DskipTests -s .github/maven/settings.xml
 ## Roadmap
 
 - [x] Spring `@Scheduled` discovery
-- [x] Execution tracking with JPA + Flyway
+- [x] Execution tracking with persistence
 - [x] Manual trigger
 - [x] REST API
 - [x] Embedded dashboard UI

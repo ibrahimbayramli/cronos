@@ -66,7 +66,7 @@ export function DashboardPage() {
           <>
             <Typography.Paragraph style={{ marginBottom: 8 }}>{error}</Typography.Paragraph>
             <Typography.Text type="secondary">
-              Spring Boot uygulamanızın çalıştığından ve Cronos API&apos;nin{' '}
+              Uygulamanızın çalıştığından ve Cronos API&apos;nin{' '}
               <Typography.Text code>/cronos/api</Typography.Text> altında erişilebilir
               olduğundan emin olun.
             </Typography.Text>

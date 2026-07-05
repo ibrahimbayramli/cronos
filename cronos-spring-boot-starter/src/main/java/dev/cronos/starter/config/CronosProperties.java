@@ -17,7 +17,7 @@ public class CronosProperties {
      * HTTP port for Cronos UI and API. When set and {@code server.port} is not
      * configured, this value is applied to {@code server.port}. When both are
      * set to different values, Cronos is also exposed on this port via an
-     * additional Tomcat connector.
+     * additional HTTP connector.
      */
     private Integer port;
 
