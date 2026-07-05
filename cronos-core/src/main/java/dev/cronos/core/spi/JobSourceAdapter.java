@@ -1,6 +1,6 @@
 package dev.cronos.core.spi;
 
-import dev.cronos.core.domain.JobDescriptor;
+import dev.cronos.core.model.DiscoveredJob;
 import dev.cronos.core.model.JobSourceType;
 
 import java.time.Instant;
@@ -19,14 +19,4 @@ public interface JobSourceAdapter {
     Optional<Instant> getNextRunTime(DiscoveredJob job);
 
     void triggerNow(DiscoveredJob job);
-
-    record DiscoveredJob(
-            String name,
-            String beanName,
-            String methodOrClass,
-            String triggerInfo,
-            Object target,
-            String methodName
-    ) {
-    }
 }

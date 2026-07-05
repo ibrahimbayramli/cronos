@@ -2,6 +2,7 @@ package dev.cronos.starter.trigger;
 
 import dev.cronos.core.domain.JobDescriptor;
 import dev.cronos.core.domain.JobExecution;
+import dev.cronos.core.model.DiscoveredJob;
 import dev.cronos.core.model.JobSourceType;
 import dev.cronos.core.model.TriggerSource;
 import dev.cronos.core.spi.JobSourceAdapter;
@@ -63,7 +64,7 @@ public class ManualTriggerService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("No adapter for source: " + job.getSourceType()));
 
-            JobSourceAdapter.DiscoveredJob discoveredJob = resolveDiscoveredJob(job);
+            DiscoveredJob discoveredJob = resolveDiscoveredJob(job);
             adapter.triggerNow(discoveredJob);
             jobExecutionService.completeExecution(executionId);
         } catch (Exception ex) {
@@ -72,7 +73,7 @@ public class ManualTriggerService {
         }
     }
 
-    private JobSourceAdapter.DiscoveredJob resolveDiscoveredJob(JobDescriptor job) {
+    private DiscoveredJob resolveDiscoveredJob(JobDescriptor job) {
         if (job.getSourceType() == JobSourceType.SPRING_SCHEDULED) {
             return springScheduledJobAdapter.findDiscoveredJob(job.getName())
                     .orElseGet(() -> fallbackDiscoveredJob(job));
@@ -80,8 +81,8 @@ public class ManualTriggerService {
         return fallbackDiscoveredJob(job);
     }
 
-    private JobSourceAdapter.DiscoveredJob fallbackDiscoveredJob(JobDescriptor job) {
-        return new JobSourceAdapter.DiscoveredJob(
+    private DiscoveredJob fallbackDiscoveredJob(JobDescriptor job) {
+        return new DiscoveredJob(
                 job.getName(),
                 job.getBeanName(),
                 job.getMethodOrClass(),

@@ -2,6 +2,7 @@ package dev.cronos.starter.discovery;
 
 import dev.cronos.core.domain.JobDescriptor;
 import dev.cronos.core.domain.JobNextRun;
+import dev.cronos.core.model.DiscoveredJob;
 import dev.cronos.core.spi.JobSourceAdapter;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.persistence.JobNextRunRepository;
@@ -28,7 +29,7 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
     public void afterSingletonsInstantiated() {
         log.info("Starting Cronos job discovery...");
         for (JobSourceAdapter adapter : adapters) {
-            for (JobSourceAdapter.DiscoveredJob discovered : adapter.discoverJobs()) {
+            for (DiscoveredJob discovered : adapter.discoverJobs()) {
                 persistDiscoveredJob(adapter, discovered);
             }
         }
@@ -44,7 +45,7 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
         }
     }
 
-    private void persistDiscoveredJob(JobSourceAdapter adapter, JobSourceAdapter.DiscoveredJob discovered) {
+    private void persistDiscoveredJob(JobSourceAdapter adapter, DiscoveredJob discovered) {
         JobDescriptor descriptor = jobDescriptorRepository.findByName(discovered.name())
                 .orElseGet(() -> {
                     JobDescriptor created = new JobDescriptor();
@@ -64,7 +65,7 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
     }
 
     private void updateNextRun(JobSourceAdapter adapter, JobDescriptor descriptor) {
-        JobSourceAdapter.DiscoveredJob discovered = new JobSourceAdapter.DiscoveredJob(
+        DiscoveredJob discovered = new DiscoveredJob(
                 descriptor.getName(),
                 descriptor.getBeanName(),
                 descriptor.getMethodOrClass(),
@@ -75,7 +76,7 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
         updateNextRun(adapter, discovered, descriptor);
     }
 
-    private void updateNextRun(JobSourceAdapter adapter, JobSourceAdapter.DiscoveredJob discovered,
+    private void updateNextRun(JobSourceAdapter adapter, DiscoveredJob discovered,
                                JobDescriptor descriptor) {
         Instant nextRun = adapter.getNextRunTime(discovered).orElse(null);
         JobNextRun jobNextRun = jobNextRunRepository.findByJob(descriptor)

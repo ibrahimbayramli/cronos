@@ -1,5 +1,6 @@
 package dev.cronos.starter.discovery;
 
+import dev.cronos.core.model.DiscoveredJob;
 import dev.cronos.core.model.JobSourceType;
 import dev.cronos.core.spi.JobSourceAdapter;
 import dev.cronos.starter.support.JobNaming;
