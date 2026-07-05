@@ -22,7 +22,6 @@ cronos-spring-boot-starter
 |---|---|
 | `cronos-core` | Domain entities (`JobDescriptor`, `JobExecution`) and `JobSourceAdapter` SPI |
 | `cronos-spring-boot-starter` | Auto-configuration, Spring `@Scheduled` adapter, REST API |
-| `cronos-samples/cronos-sample-app` | Demo application with sample scheduled jobs |
 
 ## Quick Start
 
@@ -56,15 +55,6 @@ Cronos auto-configures an embedded H2 database (zero extra config) and exposes:
 | POST | `/cronos/api/jobs/{id}/trigger` | Manual trigger |
 | GET | `/cronos/api/health` | Starter health |
 
-### Sample app
-
-```bash
-mvn install
-cd cronos-samples/cronos-sample-app
-mvn spring-boot:run
-curl http://localhost:8080/cronos/api/jobs
-```
-
 ## Configuration
 
 ```yaml
@@ -81,17 +71,6 @@ cronos:
 ```
 
 When no `DataSource` bean is present, Cronos provisions an embedded H2 database using `cronos.datasource.*` (defaults above).
-
-### Sample app job schedules
-
-Defaults are embedded in `@Scheduled` annotations; override via `application.yml`:
-
-```yaml
-sample:
-  jobs:
-    heartbeat-cron: "0 */5 * * * *"   # cron — default: every 5 minutes
-    cleanup-fixed-rate: 60000          # fixed rate in ms — default: 60 seconds
-```
 
 ## Current Status (v0.1.0-SNAPSHOT)
 

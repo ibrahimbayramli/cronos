@@ -15,7 +15,6 @@
     <modules>
         <module>cronos-core</module>
         <module>cronos-spring-boot-starter</module>
-        <module>cronos-samples/cronos-sample-app</module>
     </modules>
 
     <properties>
