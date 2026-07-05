@@ -13,11 +13,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "job_execution")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class JobExecution {
 
     @Id
@@ -48,75 +57,18 @@ public class JobExecution {
     @Column(name = "trigger_source", nullable = false)
     private TriggerSource triggerSource;
 
-    protected JobExecution() {
-    }
-
-    public JobExecution(JobDescriptor job, ExecutionStatus status, Instant startedAt,
-                        TriggerSource triggerSource) {
-        this.job = job;
-        this.status = status;
-        this.startedAt = startedAt;
-        this.triggerSource = triggerSource;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public JobDescriptor getJob() {
-        return job;
-    }
-
-    public ExecutionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ExecutionStatus status) {
-        this.status = status;
-    }
-
-    public Instant getStartedAt() {
-        return startedAt;
-    }
-
-    public Instant getFinishedAt() {
-        return finishedAt;
-    }
-
-    public void setFinishedAt(Instant finishedAt) {
-        this.finishedAt = finishedAt;
-    }
-
-    public Long getDurationMs() {
-        return durationMs;
-    }
-
-    public void setDurationMs(Long durationMs) {
-        this.durationMs = durationMs;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public TriggerSource getTriggerSource() {
-        return triggerSource;
-    }
-
-    public void complete(Instant finishedAt) {
+    public JobExecution complete(Instant finishedAt) {
         this.finishedAt = finishedAt;
         this.durationMs = finishedAt.toEpochMilli() - startedAt.toEpochMilli();
         this.status = ExecutionStatus.SUCCESS;
+        return this;
     }
 
-    public void fail(Instant finishedAt, String errorMessage) {
+    public JobExecution fail(Instant finishedAt, String errorMessage) {
         this.finishedAt = finishedAt;
         this.durationMs = finishedAt.toEpochMilli() - startedAt.toEpochMilli();
         this.status = ExecutionStatus.FAILED;
         this.errorMessage = errorMessage;
+        return this;
     }
 }

@@ -9,11 +9,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "job_descriptor")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class JobDescriptor {
 
     @Id
@@ -36,58 +45,11 @@ public class JobDescriptor {
     @Column(name = "trigger_info", length = 512)
     private String triggerInfo;
 
+    @Builder.Default
     @Column(name = "discovered_at", nullable = false)
-    private Instant discoveredAt;
+    private Instant discoveredAt = Instant.now();
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;
-
-    protected JobDescriptor() {
-    }
-
-    public JobDescriptor(String name, JobSourceType sourceType, String beanName,
-                         String methodOrClass, String triggerInfo) {
-        this.name = name;
-        this.sourceType = sourceType;
-        this.beanName = beanName;
-        this.methodOrClass = methodOrClass;
-        this.triggerInfo = triggerInfo;
-        this.discoveredAt = Instant.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public JobSourceType getSourceType() {
-        return sourceType;
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public String getMethodOrClass() {
-        return methodOrClass;
-    }
-
-    public String getTriggerInfo() {
-        return triggerInfo;
-    }
-
-    public Instant getDiscoveredAt() {
-        return discoveredAt;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 }

@@ -9,11 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "job_next_run")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 public class JobNextRun {
 
     @Id
@@ -26,28 +35,4 @@ public class JobNextRun {
 
     @Column(name = "calculated_next_run_at")
     private Instant calculatedNextRunAt;
-
-    protected JobNextRun() {
-    }
-
-    public JobNextRun(JobDescriptor job, Instant calculatedNextRunAt) {
-        this.job = job;
-        this.calculatedNextRunAt = calculatedNextRunAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public JobDescriptor getJob() {
-        return job;
-    }
-
-    public Instant getCalculatedNextRunAt() {
-        return calculatedNextRunAt;
-    }
-
-    public void setCalculatedNextRunAt(Instant calculatedNextRunAt) {
-        this.calculatedNextRunAt = calculatedNextRunAt;
-    }
 }

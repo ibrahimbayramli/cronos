@@ -29,12 +29,12 @@ public class JobExecutionService {
         JobDescriptor job = jobDescriptorRepository.findByName(jobName)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown job: " + jobName));
 
-        JobExecution execution = new JobExecution(
-                job,
-                ExecutionStatus.RUNNING,
-                Instant.now(),
-                triggerSource
-        );
+        JobExecution execution = JobExecution.builder()
+                .job(job)
+                .status(ExecutionStatus.RUNNING)
+                .startedAt(Instant.now())
+                .triggerSource(triggerSource)
+                .build();
         return jobExecutionRepository.save(execution);
     }
 
