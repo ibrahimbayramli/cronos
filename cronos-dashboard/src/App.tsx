@@ -4,9 +4,11 @@ import { DashboardPage } from './pages/DashboardPage'
 import { JobsPage } from './pages/JobsPage'
 import { JobDetailPage } from './pages/JobDetailPage'
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/cronos'
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<DashboardPage />} />

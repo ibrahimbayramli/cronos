@@ -1,2 +1,3 @@
 dev.cronos.starter.CronosDataSourceAutoConfiguration
 dev.cronos.starter.CronosAutoConfiguration
+dev.cronos.starter.ui.CronosDashboardWebConfiguration

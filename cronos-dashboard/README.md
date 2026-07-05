@@ -2,6 +2,8 @@
 
 Modern React dashboard for [Cronos](../README.md) job observability.
 
+The dashboard is **embedded in `cronos-spring-boot-starter`**. When a host application adds the Cronos dependency and starts, the UI is served automatically at `/cronos/` alongside the API at `/cronos/api`.
+
 ## Stack
 
 - React 19 + TypeScript
@@ -16,9 +18,19 @@ Modern React dashboard for [Cronos](../README.md) job observability.
 - **Job Detayı** — metadata, manual trigger, paginated execution history
 - Auto-refresh every 15 seconds on the overview page
 
-## Development
+## Embedded mode (default)
 
-Start your Spring Boot app with Cronos enabled (default port `8080`), then:
+Add `cronos-spring-boot-starter` to your Spring Boot app and run it:
+
+```
+http://localhost:8080/cronos/
+```
+
+No separate frontend server is required. Static assets are built during `mvn package` and packaged inside the starter JAR.
+
+## Standalone development
+
+For hot-reload UI development against a running Spring Boot app:
 
 ```bash
 cd cronos-dashboard
@@ -26,7 +38,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). Vite proxies `/cronos/api` to `http://localhost:8080`.
+Open [http://localhost:5173/cronos/](http://localhost:5173/cronos/). Vite proxies `/cronos/api` to `http://localhost:8080`.
 
 ## Production Build
 
@@ -34,7 +46,18 @@ Open [http://localhost:5173](http://localhost:5173). Vite proxies `/cronos/api` 
 npm run build
 ```
 
-Static files are emitted to `dist/`. Serve them behind your Spring Boot app or a reverse proxy that forwards API calls to `/cronos/api`.
+Output goes to `dist/` with `base: /cronos/` for subpath deployment. The Maven build copies these files into `cronos-spring-boot-starter` classpath at `static/cronos/`.
+
+## Configuration
+
+Host application properties:
+
+```yaml
+cronos:
+  ui-enabled: true      # set false to disable embedded UI
+  ui-base-path: /cronos # dashboard URL prefix
+  api-base-path: /cronos/api
+```
 
 ## API Endpoints Used
 
