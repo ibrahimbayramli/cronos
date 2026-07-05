@@ -47,6 +47,9 @@ jobs:
           SETTINGS_EOF
           sed -i "s|__GITHUB_ACTOR__|${GITHUB_ACTOR}|g" ~/.m2/settings.xml
           sed -i "s|__GITHUB_TOKEN__|${GITHUB_TOKEN}|g" ~/.m2/settings.xml
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub Packages
         run: mvn --batch-mode deploy -DskipTests
