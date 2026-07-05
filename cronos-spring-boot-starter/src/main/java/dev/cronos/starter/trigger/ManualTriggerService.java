@@ -9,35 +9,31 @@ import dev.cronos.starter.config.CronosProperties;
 import dev.cronos.starter.discovery.SpringScheduledJobAdapter;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.tracking.JobExecutionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ManualTriggerService {
-
-    private static final Logger log = LoggerFactory.getLogger(ManualTriggerService.class);
 
     private final JobDescriptorRepository jobDescriptorRepository;
     private final JobExecutionService jobExecutionService;
     private final List<JobSourceAdapter> adapters;
     private final SpringScheduledJobAdapter springScheduledJobAdapter;
-    private final ExecutorService executorService;
+    private final CronosProperties properties;
 
-    public ManualTriggerService(JobDescriptorRepository jobDescriptorRepository,
-                                JobExecutionService jobExecutionService,
-                                List<JobSourceAdapter> adapters,
-                                SpringScheduledJobAdapter springScheduledJobAdapter,
-                                CronosProperties properties) {
-        this.jobDescriptorRepository = jobDescriptorRepository;
-        this.jobExecutionService = jobExecutionService;
-        this.adapters = adapters;
-        this.springScheduledJobAdapter = springScheduledJobAdapter;
-        this.executorService = Executors.newFixedThreadPool(properties.getManualTriggerPoolSize(),
+    private ExecutorService executorService;
+
+    @PostConstruct
+    void initExecutor() {
+        executorService = Executors.newFixedThreadPool(properties.getManualTriggerPoolSize(),
                 runnable -> {
                     Thread thread = new Thread(runnable);
                     thread.setName("cronos-manual-trigger");

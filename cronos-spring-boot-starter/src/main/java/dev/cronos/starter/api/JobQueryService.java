@@ -3,13 +3,13 @@ package dev.cronos.starter.api;
 import dev.cronos.core.domain.JobDescriptor;
 import dev.cronos.core.domain.JobExecution;
 import dev.cronos.core.domain.JobNextRun;
-import dev.cronos.core.model.ExecutionStatus;
 import dev.cronos.starter.api.dto.JobDetailResponse;
 import dev.cronos.starter.api.dto.JobExecutionResponse;
 import dev.cronos.starter.api.dto.JobSummaryResponse;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.persistence.JobExecutionRepository;
 import dev.cronos.starter.persistence.JobNextRunRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,19 +19,12 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class JobQueryService {
 
     private final JobDescriptorRepository jobDescriptorRepository;
     private final JobExecutionRepository jobExecutionRepository;
     private final JobNextRunRepository jobNextRunRepository;
-
-    public JobQueryService(JobDescriptorRepository jobDescriptorRepository,
-                           JobExecutionRepository jobExecutionRepository,
-                           JobNextRunRepository jobNextRunRepository) {
-        this.jobDescriptorRepository = jobDescriptorRepository;
-        this.jobExecutionRepository = jobExecutionRepository;
-        this.jobNextRunRepository = jobNextRunRepository;
-    }
 
     public List<JobSummaryResponse> listJobs() {
         return jobDescriptorRepository.findAll().stream()

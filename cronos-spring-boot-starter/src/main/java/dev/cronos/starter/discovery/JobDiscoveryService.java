@@ -5,8 +5,8 @@ import dev.cronos.core.domain.JobNextRun;
 import dev.cronos.core.spi.JobSourceAdapter;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.persistence.JobNextRunRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,22 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class JobDiscoveryService implements SmartInitializingSingleton {
-
-    private static final Logger log = LoggerFactory.getLogger(JobDiscoveryService.class);
 
     private final List<JobSourceAdapter> adapters;
     private final JobDescriptorRepository jobDescriptorRepository;
     private final JobNextRunRepository jobNextRunRepository;
-
-    public JobDiscoveryService(List<JobSourceAdapter> adapters,
-                               JobDescriptorRepository jobDescriptorRepository,
-                               JobNextRunRepository jobNextRunRepository) {
-        this.adapters = adapters;
-        this.jobDescriptorRepository = jobDescriptorRepository;
-        this.jobNextRunRepository = jobNextRunRepository;
-    }
 
     @Override
     @Transactional
@@ -54,13 +46,15 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
 
     private void persistDiscoveredJob(JobSourceAdapter adapter, JobSourceAdapter.DiscoveredJob discovered) {
         JobDescriptor descriptor = jobDescriptorRepository.findByName(discovered.name())
-                .orElseGet(() -> JobDescriptor.builder()
-                        .name(discovered.name())
-                        .sourceType(adapter.getSourceType())
-                        .beanName(discovered.beanName())
-                        .methodOrClass(discovered.methodOrClass())
-                        .triggerInfo(discovered.triggerInfo())
-                        .build());
+                .orElseGet(() -> {
+                    JobDescriptor created = new JobDescriptor();
+                    created.setName(discovered.name());
+                    created.setSourceType(adapter.getSourceType());
+                    created.setBeanName(discovered.beanName());
+                    created.setMethodOrClass(discovered.methodOrClass());
+                    created.setTriggerInfo(discovered.triggerInfo());
+                    return created;
+                });
 
         if (descriptor.getId() == null) {
             descriptor = jobDescriptorRepository.save(descriptor);
@@ -85,11 +79,12 @@ public class JobDiscoveryService implements SmartInitializingSingleton {
                                JobDescriptor descriptor) {
         Instant nextRun = adapter.getNextRunTime(discovered).orElse(null);
         JobNextRun jobNextRun = jobNextRunRepository.findByJob(descriptor)
-                .map(existing -> existing.toBuilder().calculatedNextRunAt(nextRun).build())
-                .orElseGet(() -> JobNextRun.builder()
-                        .job(descriptor)
-                        .calculatedNextRunAt(nextRun)
-                        .build());
+                .orElseGet(() -> {
+                    JobNextRun created = new JobNextRun();
+                    created.setJob(descriptor);
+                    return created;
+                });
+        jobNextRun.setCalculatedNextRunAt(nextRun);
         jobNextRunRepository.save(jobNextRun);
     }
 

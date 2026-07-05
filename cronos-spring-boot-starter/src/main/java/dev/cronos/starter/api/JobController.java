@@ -7,6 +7,7 @@ import dev.cronos.starter.api.dto.JobSummaryResponse;
 import dev.cronos.starter.api.dto.TriggerResponse;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.trigger.ManualTriggerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,19 +24,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${cronos.api-base-path:/cronos/api}")
+@RequiredArgsConstructor
 public class JobController {
 
     private final JobQueryService jobQueryService;
     private final ManualTriggerService manualTriggerService;
     private final JobDescriptorRepository jobDescriptorRepository;
-
-    public JobController(JobQueryService jobQueryService,
-                         ManualTriggerService manualTriggerService,
-                         JobDescriptorRepository jobDescriptorRepository) {
-        this.jobQueryService = jobQueryService;
-        this.manualTriggerService = manualTriggerService;
-        this.jobDescriptorRepository = jobDescriptorRepository;
-    }
 
     @GetMapping("/jobs")
     public List<JobSummaryResponse> listJobs() {

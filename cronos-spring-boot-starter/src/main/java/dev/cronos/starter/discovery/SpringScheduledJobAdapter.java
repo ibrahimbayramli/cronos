@@ -3,8 +3,8 @@ package dev.cronos.starter.discovery;
 import dev.cronos.core.model.JobSourceType;
 import dev.cronos.core.spi.JobSourceAdapter;
 import dev.cronos.starter.support.JobNaming;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.config.ScheduledTask;
@@ -21,17 +21,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class SpringScheduledJobAdapter implements JobSourceAdapter {
-
-    private static final Logger log = LoggerFactory.getLogger(SpringScheduledJobAdapter.class);
 
     private final ApplicationContext applicationContext;
     private final Map<String, DiscoveredJob> discoveredJobs = new ConcurrentHashMap<>();
-
-    public SpringScheduledJobAdapter(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     @Override
     public JobSourceType getSourceType() {

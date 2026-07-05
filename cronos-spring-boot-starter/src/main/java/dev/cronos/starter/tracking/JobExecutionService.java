@@ -6,6 +6,7 @@ import dev.cronos.core.model.ExecutionStatus;
 import dev.cronos.core.model.TriggerSource;
 import dev.cronos.starter.persistence.JobDescriptorRepository;
 import dev.cronos.starter.persistence.JobExecutionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,28 +14,22 @@ import java.time.Instant;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class JobExecutionService {
 
     private final JobDescriptorRepository jobDescriptorRepository;
     private final JobExecutionRepository jobExecutionRepository;
-
-    public JobExecutionService(JobDescriptorRepository jobDescriptorRepository,
-                               JobExecutionRepository jobExecutionRepository) {
-        this.jobDescriptorRepository = jobDescriptorRepository;
-        this.jobExecutionRepository = jobExecutionRepository;
-    }
 
     @Transactional
     public JobExecution startExecution(String jobName, TriggerSource triggerSource) {
         JobDescriptor job = jobDescriptorRepository.findByName(jobName)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown job: " + jobName));
 
-        JobExecution execution = JobExecution.builder()
-                .job(job)
-                .status(ExecutionStatus.RUNNING)
-                .startedAt(Instant.now())
-                .triggerSource(triggerSource)
-                .build();
+        JobExecution execution = new JobExecution();
+        execution.setJob(job);
+        execution.setStatus(ExecutionStatus.RUNNING);
+        execution.setStartedAt(Instant.now());
+        execution.setTriggerSource(triggerSource);
         return jobExecutionRepository.save(execution);
     }
 
