@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.ibrahimbayramli</groupId>
+        <groupId>com.github.ibrahimbayramli</groupId>
         <artifactId>cronos-parent</artifactId>
         <version>0.1.0</version>
     </parent>
@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.ibrahimbayramli</groupId>
+            <groupId>com.github.ibrahimbayramli</groupId>
             <artifactId>cronos-core</artifactId>
         </dependency>
         <dependency>
@@ -138,7 +138,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>io.github.ibrahimbayramli:cronos-core</include>
+                                    <include>com.github.ibrahimbayramli:cronos-core</include>
                                 </includes>
                             </artifactSet>
                             <createDependencyReducedPom>true</createDependencyReducedPom>

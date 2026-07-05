@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.ibrahimbayramli</groupId>
+    <groupId>com.github.ibrahimbayramli</groupId>
     <artifactId>cronos-parent</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
@@ -69,12 +69,12 @@
                 <version>${lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.ibrahimbayramli</groupId>
+                <groupId>com.github.ibrahimbayramli</groupId>
                 <artifactId>cronos-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.ibrahimbayramli</groupId>
+                <groupId>com.github.ibrahimbayramli</groupId>
                 <artifactId>cronos-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -83,15 +83,25 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/${github.owner}/${github.repository}</url>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://central.sonatype.com/</url>
         </repository>
     </distributionManagement>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.9.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -163,6 +173,10 @@
 
         <plugins>
             <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
@@ -172,4 +186,34 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.7</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

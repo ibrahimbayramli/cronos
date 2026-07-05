@@ -34,7 +34,7 @@ When your app depends on `cronos-spring-boot-starter`:
 http://localhost:8080/cronos/
 ```
 
-Add the starter from [GitHub Packages](../README.md#add-to-your-project) — the UI is included automatically.
+Add the starter from [Maven Central](../README.md#projenize-ekleyin) — the UI is included automatically.
 
 ---
 
