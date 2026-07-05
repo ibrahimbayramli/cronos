@@ -38,3 +38,12 @@ npm run build
 ```
 
 Output is copied into the starter JAR during `mvn package` at `classpath:/static/cronos/`.
+
+## Configuration
+
+```yaml
+cronos:
+  ui-enabled: true
+  ui-base-path: /cronos
+  api-base-path: /cronos/api
+```
