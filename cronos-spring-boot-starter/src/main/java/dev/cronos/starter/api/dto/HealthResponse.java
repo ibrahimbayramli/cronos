@@ -1,10 +1,15 @@
 package dev.cronos.starter.api.dto;
 
+import lombok.Builder;
+import lombok.Getter;
+
 import java.time.Instant;
 
-public record HealthResponse(
-        String status,
-        Instant timestamp,
-        long discoveredJobs
-) {
+@Getter
+@Builder
+public class HealthResponse {
+
+    private final String status;
+    private final Instant timestamp;
+    private final long discoveredJobs;
 }

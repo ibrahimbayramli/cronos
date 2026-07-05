@@ -49,22 +49,22 @@ public class JobController {
     @PostMapping("/jobs/{id}/trigger")
     public TriggerResponse triggerJob(@PathVariable("id") Long id) {
         ManualTriggerService.TriggerResult result = manualTriggerService.trigger(id);
-        return new TriggerResponse(
-                result.status().name(),
-                result.jobId(),
-                result.jobName(),
-                result.executionId(),
-                result.message()
-        );
+        return TriggerResponse.builder()
+                .status(result.status().name())
+                .jobId(result.jobId())
+                .jobName(result.jobName())
+                .executionId(result.executionId())
+                .message(result.message())
+                .build();
     }
 
     @GetMapping("/health")
     public HealthResponse health() {
-        return new HealthResponse(
-                "UP",
-                Instant.now(),
-                jobDescriptorRepository.count()
-        );
+        return HealthResponse.builder()
+                .status("UP")
+                .timestamp(Instant.now())
+                .discoveredJobs(jobDescriptorRepository.count())
+                .build();
     }
 
     @ExceptionHandler(JobNotFoundException.class)

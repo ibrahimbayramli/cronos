@@ -48,53 +48,55 @@ public class JobQueryService {
     private JobSummaryResponse toSummary(JobDescriptor job) {
         JobExecution latest = jobExecutionRepository.findFirstByJobOrderByStartedAtDesc(job).orElse(null);
         JobNextRun nextRun = jobNextRunRepository.findByJob(job).orElse(null);
-        return new JobSummaryResponse(
-                job.getId(),
-                job.getName(),
-                job.getSourceType(),
-                job.getBeanName(),
-                job.getMethodOrClass(),
-                job.getTriggerInfo(),
-                job.getDiscoveredAt(),
-                job.isEnabled(),
-                latest != null ? latest.getStartedAt() : null,
-                latest != null ? latest.getStatus() : null,
-                latest != null ? latest.getDurationMs() : null,
-                nextRun != null ? nextRun.getCalculatedNextRunAt() : null
-        );
+
+        return JobSummaryResponse.builder()
+                .id(job.getId())
+                .name(job.getName())
+                .sourceType(job.getSourceType())
+                .beanName(job.getBeanName())
+                .methodOrClass(job.getMethodOrClass())
+                .triggerInfo(job.getTriggerInfo())
+                .discoveredAt(job.getDiscoveredAt())
+                .enabled(job.isEnabled())
+                .lastRunAt(latest != null ? latest.getStartedAt() : null)
+                .lastStatus(latest != null ? latest.getStatus() : null)
+                .lastDurationMs(latest != null ? latest.getDurationMs() : null)
+                .nextRunAt(nextRun != null ? nextRun.getCalculatedNextRunAt() : null)
+                .build();
     }
 
     private JobDetailResponse toDetail(JobDescriptor job) {
         JobSummaryResponse summary = toSummary(job);
         long totalExecutions = jobExecutionRepository.findByJobOrderByStartedAtDesc(job, Pageable.unpaged())
                 .getTotalElements();
-        return new JobDetailResponse(
-                summary.id(),
-                summary.name(),
-                summary.sourceType(),
-                summary.beanName(),
-                summary.methodOrClass(),
-                summary.triggerInfo(),
-                summary.discoveredAt(),
-                summary.enabled(),
-                summary.lastRunAt(),
-                summary.lastStatus(),
-                summary.lastDurationMs(),
-                summary.nextRunAt(),
-                totalExecutions
-        );
+
+        return JobDetailResponse.builder()
+                .id(summary.getId())
+                .name(summary.getName())
+                .sourceType(summary.getSourceType())
+                .beanName(summary.getBeanName())
+                .methodOrClass(summary.getMethodOrClass())
+                .triggerInfo(summary.getTriggerInfo())
+                .discoveredAt(summary.getDiscoveredAt())
+                .enabled(summary.isEnabled())
+                .lastRunAt(summary.getLastRunAt())
+                .lastStatus(summary.getLastStatus())
+                .lastDurationMs(summary.getLastDurationMs())
+                .nextRunAt(summary.getNextRunAt())
+                .totalExecutions(totalExecutions)
+                .build();
     }
 
     private JobExecutionResponse toExecutionResponse(JobExecution execution) {
-        return new JobExecutionResponse(
-                execution.getId(),
-                execution.getJob().getId(),
-                execution.getStatus(),
-                execution.getStartedAt(),
-                execution.getFinishedAt(),
-                execution.getDurationMs(),
-                execution.getErrorMessage(),
-                execution.getTriggerSource()
-        );
+        return JobExecutionResponse.builder()
+                .id(execution.getId())
+                .jobId(execution.getJob().getId())
+                .status(execution.getStatus())
+                .startedAt(execution.getStartedAt())
+                .finishedAt(execution.getFinishedAt())
+                .durationMs(execution.getDurationMs())
+                .errorMessage(execution.getErrorMessage())
+                .triggerSource(execution.getTriggerSource())
+                .build();
     }
 }
