@@ -39,22 +39,19 @@ jobs:
             <servers>
               <server>
                 <id>github</id>
-                <username>${GITHUB_ACTOR}</username>
-                <password>${GITHUB_TOKEN}</password>
+                <username>__GITHUB_ACTOR__</username>
+                <password>__GITHUB_TOKEN__</password>
               </server>
             </servers>
           </settings>
           SETTINGS_EOF
-          envsubst < ~/.m2/settings.xml > ~/.m2/settings.xml.tmp && mv ~/.m2/settings.xml.tmp ~/.m2/settings.xml
+          sed -i "s|__GITHUB_ACTOR__|${GITHUB_ACTOR}|g" ~/.m2/settings.xml
+          sed -i "s|__GITHUB_TOKEN__|${GITHUB_TOKEN}|g" ~/.m2/settings.xml
 
       - name: Publish to GitHub Packages
         run: mvn --batch-mode deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
 
       - name: Verify Gradle publish task
         run: ./gradlew verifyConsumerGradleSnippet --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
