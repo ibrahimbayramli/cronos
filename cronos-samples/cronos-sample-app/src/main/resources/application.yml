@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: cronos-sample-app
+  config:
+    import: optional:classpath:application-cronos.properties
+
+server:
+  port: 8080
+
+logging:
+  level:
+    dev.cronos: INFO
