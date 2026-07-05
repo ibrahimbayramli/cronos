@@ -2,12 +2,13 @@ plugins {
     base
 }
 
-group = "dev.cronos"
+group = "com.github.ibrahimbayramli"
 version = "0.1.0"
 
 val githubOwner = "ibrahimbayramli"
 val githubRepository = "cronos"
-val githubPackagesUrl = "https://maven.pkg.github.com/$githubOwner/$githubRepository"
+val mavenCentralArtifactUrl =
+    "https://central.sonatype.com/artifact/com.github.$githubOwner/cronos-spring-boot-starter"
 val starterArtifact = "cronos-spring-boot-starter"
 
 tasks.register<Exec>("mavenPackage") {
@@ -24,67 +25,66 @@ tasks.register<Exec>("mavenPackage") {
 
 tasks.register<Exec>("mavenDeploy") {
     group = "publishing"
-    description = "Deploy all Maven modules to GitHub Packages (Maven registry, Gradle-compatible)"
+    description = "Deploy starter artifact to Maven Central"
     dependsOn("mavenPackage")
     commandLine(
         "mvn",
         "--batch-mode",
         "deploy",
         "-DskipTests",
+        "-Prelease",
         "-s",
         ".github/maven/settings.xml",
     )
     environment(
         mapOf(
-            "GITHUB_TOKEN" to (System.getenv("GITHUB_TOKEN") ?: ""),
-            "GITHUB_ACTOR" to (System.getenv("GITHUB_ACTOR") ?: githubOwner),
+            "MAVEN_CENTRAL_USERNAME" to (System.getenv("MAVEN_CENTRAL_USERNAME") ?: ""),
+            "MAVEN_CENTRAL_PASSWORD" to (System.getenv("MAVEN_CENTRAL_PASSWORD") ?: ""),
+            "GPG_PASSPHRASE" to (System.getenv("GPG_PASSPHRASE") ?: ""),
         ),
     )
 }
 
-tasks.register("publishToGitHubPackages") {
+tasks.register("publishToMavenCentral") {
     group = "publishing"
-    description = "Publish Cronos JARs to GitHub Packages for Maven and Gradle consumers"
+    description = "Publish Cronos starter to Maven Central"
     dependsOn("mavenDeploy")
 }
 
 tasks.register("verifyConsumerGradleSnippet") {
     group = "verification"
-    description = "Prints Gradle coordinates and repository URL for consumers"
+    description = "Prints Gradle coordinates for consumers"
     doLast {
-        println("Repository: $githubPackagesUrl")
         println("Dependency: implementation(\"${project.group}:$starterArtifact:$version\")")
     }
 }
 
 tasks.register("verifyConsumerMavenSnippet") {
     group = "verification"
-    description = "Prints Maven coordinates and repository URL for consumers"
+    description = "Prints Maven coordinates for consumers"
     doLast {
-        println("Repository: $githubPackagesUrl")
-        println("Dependency: dev.cronos:$starterArtifact:$version")
+        println("Dependency: com.github.ibrahimbayramli:$starterArtifact:$version")
     }
 }
 
 tasks.register("printPublishingInfo") {
     group = "publishing"
-    description = "Show GitHub Packages URLs and published artifact coordinates"
+    description = "Show Maven Central coordinates and publishing info"
     doLast {
         println(
             """
             |
-            |Cronos GitHub Packages
-            |------------------------
-            |Registry : $githubPackagesUrl
-            |Packages : https://github.com/$githubOwner/$githubRepository/packages
+            |Cronos Maven Central
+            |--------------------
+            |Artifact : https://github.com/$githubOwner/$githubRepository
+            |Central  : $mavenCentralArtifactUrl
             |Release  : https://github.com/$githubOwner/$githubRepository/releases/tag/v$version
             |
-            |Artifacts (version $version)
-            |  - dev.cronos:cronos-core:$version
-            |  - dev.cronos:cronos-spring-boot-starter:$version
+            |Dependency (version $version)
+            |  com.github.ibrahimbayramli:cronos-spring-boot-starter:$version
             |
-            |Publish  : ./gradlew publishToGitHubPackages
-            |         (requires GITHUB_TOKEN with write:packages)
+            |Publish  : ./gradlew publishToMavenCentral
+            |         (requires MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD / GPG)
             |
             """.trimMargin(),
         )

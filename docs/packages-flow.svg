@@ -13,20 +13,20 @@
   <rect x="24" y="24" width="200" height="232" rx="14" fill="url(#panel)" stroke="#334155"/>
   <text x="124" y="72" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="700" text-anchor="middle">Maven</text>
   <text x="124" y="108" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle">pom.xml</text>
-  <text x="124" y="132" fill="#67e8f9" font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">settings.xml</text>
+  <text x="124" y="148" fill="#67e8f9" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">dependency</text>
   <rect x="368" y="24" width="224" height="232" rx="14" fill="url(#panel)" stroke="#22d3ee" stroke-width="2"/>
-  <text x="480" y="72" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="700" text-anchor="middle">GitHub Packages</text>
-  <text x="480" y="108" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">maven.pkg.github.com</text>
-  <text x="480" y="136" fill="#cbd5e1" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">dev.cronos</text>
+  <text x="480" y="72" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="700" text-anchor="middle">Maven Central</text>
+  <text x="480" y="108" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">central.sonatype.com</text>
+  <text x="480" y="136" fill="#cbd5e1" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">com.github.ibrahimbayramli</text>
   <text x="480" y="158" fill="#86efac" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">cronos-spring-boot-starter</text>
   <text x="480" y="180" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">0.1.0</text>
   <rect x="736" y="24" width="200" height="232" rx="14" fill="url(#panel)" stroke="#334155"/>
   <text x="836" y="72" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="700" text-anchor="middle">Gradle</text>
   <text x="836" y="108" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="13" text-anchor="middle">build.gradle.kts</text>
-  <text x="836" y="132" fill="#67e8f9" font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle">gradle.properties</text>
+  <text x="836" y="148" fill="#67e8f9" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle">dependency</text>
   <path d="M224 140 H368" stroke="url(#line)" stroke-width="4"/>
   <path d="M592 140 H736" stroke="url(#line)" stroke-width="4"/>
   <polygon points="368,140 356,134 356,146" fill="#22d3ee"/>
   <polygon points="736,140 724,134 724,146" fill="#22d3ee"/>
-  <text x="480" y="248" fill="#64748b" font-family="Inter,Segoe UI,sans-serif" font-size="14" text-anchor="middle">Same Maven registry · Maven &amp; Gradle consumers</text>
+  <text x="480" y="248" fill="#64748b" font-family="Inter,Segoe UI,sans-serif" font-size="14" text-anchor="middle">Maven Central · Maven &amp; Gradle</text>
 </svg>

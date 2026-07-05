@@ -3,7 +3,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ibrahimbayramli/cronos/packages"><img src="https://img.shields.io/badge/GitHub%20Packages-Maven%20%26%20Gradle-24292f?style=for-the-badge&logo=github" alt="GitHub Packages" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=for-the-badge&label=release&color=0891b2" alt="Release v0.1.0" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/actions/workflows/publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/ibrahimbayramli/cronos/publish.yml?style=for-the-badge&label=CI" alt="Publish workflow" /></a>
 </p>
@@ -33,7 +32,7 @@
 
 Spring Boot uygulamaları genellikle kritik arka plan işlerini `@Scheduled` ile çalıştırır; ancak gözlemlenebilirlik çoğu zaman sonradan düşünülür — merkezi bir iş listesi yoktur, çalıştırma geçmişi tutulmaz, manuel tetikleme için pratik bir yol bulunmaz.
 
-Cronos tek bir bağımlılık olarak devreye girer ve otomatik olarak şunları sağlar:
+Cronos starter bağımlılığı olarak devreye girer ve otomatik olarak şunları sağlar:
 
 | Özellik | Ne sunar |
 |---|---|
@@ -108,25 +107,13 @@ Cronos başlangıçta kontrol paneli ve API URL'lerini loglar.
 
 ## Yayınlanan artifaktlar
 
-Cronos **GitHub Packages** üzerinde yayınlanır ve hem **Maven** hem **Gradle** projeleri tarafından aynı Maven uyumlu kayıt defterinden tüketilir.
-
-<p align="center">
-  <img src="docs/packages-flow.svg" alt="Maven ve Gradle, Cronos'u GitHub Packages üzerinden tüketir" width="720" />
-</p>
-
 | Paket | Koordinatlar | Kullanım |
 |---|---|---|
-| **Starter** (önerilen) | `dev.cronos:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
-| Core | `dev.cronos:cronos-core:0.1.0` | Domain modelleri ve SPI (ileri düzey) |
+| **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
 
-**Kayıt defteri URL'si:** `https://maven.pkg.github.com/ibrahimbayramli/cronos`
+**Kaynak:** [github.com/ibrahimbayramli/cronos](https://github.com/ibrahimbayramli/cronos)
 
-**GitHub'daki canlı paketler:**
-
-- [cronos-spring-boot-starter](https://github.com/ibrahimbayramli/cronos/packages/3114732)
-- [cronos-core](https://github.com/users/ibrahimbayramli/packages?repo_name=cronos)
-- [Tüm paketler](https://github.com/ibrahimbayramli/cronos/packages)
-- [v0.1.0 sürümü](https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0)
+> `cronos-core` dahili bir modüldür; starter JAR'ına gömülür ve ayrıca tüketilmesi gerekmez.
 
 ---
 
@@ -137,28 +124,17 @@ Cronos **GitHub Packages** üzerinde yayınlanır ve hem **Maven** hem **Gradle*
 <details open>
 <summary><strong>Adım adım</strong></summary>
 
-**1. Depo** — `pom.xml` dosyanıza ekleyin:
-
-```xml
-<repositories>
-    <repository>
-        <id>github-cronos</id>
-        <url>https://maven.pkg.github.com/ibrahimbayramli/cronos</url>
-    </repository>
-</repositories>
-```
-
-**2. Bağımlılık:**
+`pom.xml` dosyanıza ekleyin:
 
 ```xml
 <dependency>
-    <groupId>dev.cronos</groupId>
+    <groupId>com.github.ibrahimbayramli</groupId>
     <artifactId>cronos-spring-boot-starter</artifactId>
     <version>0.1.0</version>
 </dependency>
 ```
 
-**3. Senkronize edin ve çalıştırın:**
+Senkronize edin ve çalıştırın:
 
 ```bash
 mvn clean compile
@@ -172,32 +148,15 @@ mvn spring-boot:run
 <details open>
 <summary><strong>Adım adım</strong></summary>
 
-**1. Depo** — `settings.gradle.kts` içinde (Gradle 7+, önerilen):
-
-```kotlin
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        maven {
-            name = "GitHubPackagesCronos"
-            url = uri("https://maven.pkg.github.com/ibrahimbayramli/cronos")
-        }
-    }
-}
-```
-
-Eski projelerde aynı `maven { ... }` bloğunu `build.gradle.kts` içindeki `repositories` bölümüne ekleyin.
-
-**2. Bağımlılık** — `build.gradle.kts` içinde:
+`build.gradle.kts` dosyanıza ekleyin:
 
 ```kotlin
 dependencies {
-    implementation("dev.cronos:cronos-spring-boot-starter:0.1.0")
+    implementation("com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0")
 }
 ```
 
-**3. Senkronize edin ve çalıştırın:**
+Senkronize edin ve çalıştırın:
 
 ```bash
 ./gradlew clean build
@@ -209,8 +168,8 @@ dependencies {
 ### Çözümlemeyi doğrulayın
 
 ```bash
-# Maven — dev.cronos:cronos-spring-boot-starter:0.1.0 indirilmeli
-mvn dependency:get -Dartifact=dev.cronos:cronos-spring-boot-starter:0.1.0
+# Maven — com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0 indirilmeli
+mvn dependency:get -Dartifact=com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0
 
 # Gradle — koordinatları yazdır
 ./gradlew verifyConsumerGradleSnippet
@@ -268,27 +227,6 @@ mvn clean verify
 
 # Daha hızlı CI için arayüz derlemesini atla
 mvn clean verify -Dcronos.ui.build.skip=true
-
-# Yayın koordinatlarını göster
-./gradlew printPublishingInfo
-```
-
----
-
-## Yayınlama (bakımcılar)
-
-Artifaktlar her [GitHub Release](https://github.com/ibrahimbayramli/cronos/releases) yayınlandığında **GitHub Packages**'a gönderilir. Aynı Maven kayıt defteri hem Maven hem Gradle tüketicilerine hizmet verir.
-
-**CI:** [`.github/workflows/publish.yml`](.github/workflows/publish.yml), bir release yayınlandığında `mvn deploy` çalıştırır.
-
-**Yerel yayın:**
-
-```bash
-# Maven
-mvn deploy -DskipTests -s .github/maven/settings.xml
-
-# Gradle wrapper (Maven deploy'a delege eder)
-./gradlew publishToGitHubPackages
 ```
 
 ---
@@ -299,7 +237,7 @@ mvn deploy -DskipTests -s .github/maven/settings.xml
 |---|---|
 | Kontrol paneli 404 | `cronos.ui-enabled=true` olduğundan ve `spring.web.resources` ile çakışma olmadığından emin olun |
 | İşler listelenmiyor | `@EnableScheduling` mevcut olduğunu ve metodların `@Scheduled` kullandığını doğrulayın |
-| Gradle artifaktı bulamıyor | Depoyu yalnızca `build.gradle.kts`'e değil, `settings.gradle.kts`'e de ekleyin |
+| Gradle artifaktı bulamıyor | `repositories { mavenCentral() }` tanımlı olduğundan emin olun |
 
 ---
 
@@ -310,7 +248,7 @@ mvn deploy -DskipTests -s .github/maven/settings.xml
 - [x] Manuel tetikleme
 - [x] REST API
 - [x] Gömülü kontrol paneli arayüzü
-- [x] GitHub Packages (Maven ve Gradle)
+- [ ] Maven Central (`com.github.*` koordinatları)
 - [ ] WebSocket ile canlı güncellemeler
 - [ ] Quartz adaptörü
 - [ ] API anahtarı / JWT kimlik doğrulama

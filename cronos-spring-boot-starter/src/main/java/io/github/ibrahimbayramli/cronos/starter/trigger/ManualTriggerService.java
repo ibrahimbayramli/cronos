@@ -1,0 +1,83 @@
+package io.github.ibrahimbayramli.cronos.starter.trigger;
+
+import io.github.ibrahimbayramli.cronos.core.domain.JobDescriptor;
+import io.github.ibrahimbayramli.cronos.core.domain.JobExecution;
+import io.github.ibrahimbayramli.cronos.core.model.DiscoveredJob;
+import io.github.ibrahimbayramli.cronos.core.model.JobSourceType;
+import io.github.ibrahimbayramli.cronos.core.model.TriggerSource;
+import io.github.ibrahimbayramli.cronos.core.spi.JobSourceAdapter;
+import io.github.ibrahimbayramli.cronos.starter.config.CronosProperties;
+import io.github.ibrahimbayramli.cronos.starter.discovery.SpringScheduledJobAdapter;
+import io.github.ibrahimbayramli.cronos.starter.persistence.JobDescriptorRepository;
+import io.github.ibrahimbayramli.cronos.starter.tracking.JobExecutionService;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ManualTriggerService {
+
+    private final JobDescriptorRepository jobDescriptorRepository;
+    private final JobExecutionService jobExecutionService;
+    private final List<JobSourceAdapter> adapters;
+    private final SpringScheduledJobAdapter springScheduledJobAdapter;
+    private final CronosProperties properties;
+
+    private ExecutorService executorService;
+
+    @PostConstruct
+    void initExecutor() {
+        executorService = Executors.newFixedThreadPool(properties.getManualTriggerPoolSize(),
+                runnable -> {
+                    Thread thread = new Thread(runnable);
+                    thread.setName("cronos-manual-trigger");
+                    thread.setDaemon(true);
+                    return thread;
+                });
+    }
+
+    public TriggerResult trigger(Long jobId) {
+        JobDescriptor job = jobDescriptorRepository.findById(jobId)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown job id: " + jobId));
+
+        if (jobExecutionService.isRunning(job.getName())) {
+            return TriggerResult.alreadyRunning(job.getId(), job.getName());
+        }
+
+        JobExecution execution = jobExecutionService.startExecution(job.getName(), TriggerSource.MANUAL);
+
+        executorService.submit(() -> runManualExecution(job, execution.getId()));
+        return TriggerResult.started(job.getId(), job.getName(), execution.getId());
+    }
+
+    private void runManualExecution(JobDescriptor job, Long executionId) {
+        try {
+            JobSourceAdapter adapter = adapters.stream()
+                    .filter(candidate -> candidate.getSourceType() == job.getSourceType())
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No adapter for source: " + job.getSourceType()));
+
+            DiscoveredJob discoveredJob = resolveDiscoveredJob(job);
+            adapter.triggerNow(discoveredJob);
+            jobExecutionService.completeExecution(executionId);
+        } catch (Exception ex) {
+            log.warn("Manual trigger failed for job {}: {}", job.getName(), ex.getMessage());
+            jobExecutionService.failExecution(executionId, ex);
+        }
+    }
+
+    private DiscoveredJob resolveDiscoveredJob(JobDescriptor job) {
+        if (job.getSourceType() == JobSourceType.SPRING_SCHEDULED) {
+            return springScheduledJobAdapter.findDiscoveredJob(job.getName())
+                    .orElseGet(() -> DiscoveredJob.fromDescriptor(job));
+        }
+        return DiscoveredJob.fromDescriptor(job);
+    }
+}
