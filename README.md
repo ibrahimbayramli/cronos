@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.0"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=for-the-badge&label=release&color=0891b2" alt="Release v0.1.0" /></a>
+  <a href="https://github.com/ibrahimbayramli/cronos/releases/tag/v0.1.1"><img src="https://img.shields.io/github/v/release/ibrahimbayramli/cronos?style=for-the-badge&label=release&color=0891b2" alt="Release v0.1.1" /></a>
   <a href="https://github.com/ibrahimbayramli/cronos/actions/workflows/publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/ibrahimbayramli/cronos/publish.yml?style=for-the-badge&label=CI" alt="Publish workflow" /></a>
 </p>
 
@@ -109,7 +109,7 @@ Cronos başlangıçta kontrol paneli ve API URL'lerini loglar.
 
 | Paket | Koordinatlar | Kullanım |
 |---|---|---|
-| **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0` | Otomatik yapılandırma, REST API, gömülü arayüz |
+| **Starter** | `com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.1` | Otomatik yapılandırma, REST API, gömülü arayüz |
 
 **Kaynak:** [github.com/ibrahimbayramli/cronos](https://github.com/ibrahimbayramli/cronos)
 
@@ -130,7 +130,7 @@ Cronos başlangıçta kontrol paneli ve API URL'lerini loglar.
 <dependency>
     <groupId>com.github.ibrahimbayramli</groupId>
     <artifactId>cronos-spring-boot-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -152,7 +152,7 @@ mvn spring-boot:run
 
 ```kotlin
 dependencies {
-    implementation("com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0")
+    implementation("com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.1")
 }
 ```
 
@@ -168,8 +168,8 @@ Senkronize edin ve çalıştırın:
 ### Çözümlemeyi doğrulayın
 
 ```bash
-# Maven — com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0 indirilmeli
-mvn dependency:get -Dartifact=com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.0
+# Maven — com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.1 indirilmeli
+mvn dependency:get -Dartifact=com.github.ibrahimbayramli:cronos-spring-boot-starter:0.1.1
 
 # Gradle — koordinatları yazdır
 ./gradlew verifyConsumerGradleSnippet

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.github.ibrahimbayramli"
-version = "0.1.0"
+version = "0.1.1"
 
 val githubOwner = "ibrahimbayramli"
 val githubRepository = "cronos"
